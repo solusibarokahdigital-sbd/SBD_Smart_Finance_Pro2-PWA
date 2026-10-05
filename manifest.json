@@ -1,0 +1,17 @@
+{
+  "name": "SBD Smart Finance",
+  "short_name": "SBD Finance",
+  "description": "Aplikasi kelola keuangan pribadi offline-first, tanpa login, tanpa batas - oleh SB-Digital",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#0F2557",
+  "theme_color": "#0F2557",
+  "lang": "id",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

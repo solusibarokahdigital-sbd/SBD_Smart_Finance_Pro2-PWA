@@ -1,0 +1,2812 @@
+<!doctype html>
+<html lang="id" dir="ltr" data-theme="light">
+<head>
+<meta charset="utf-8">
+<title>SBD Smart Finance - Aplikasi Keuangan Pribadi</title>
+<meta name="description" content="SBD Smart Finance: Aplikasi kelola keuangan pribadi offline-first, tanpa login, tanpa batas, oleh SB-Digital">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0F2557">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="SBD Finance">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+:root, [data-theme="light"]{
+  --navy:#0F2557; --navy-dark:#0A1A3D; --navy-soft:#16305F;
+  --gold:#C9A227; --gold-light:#E7C766; --gold-soft:#FCF3D8;
+  --bg:#F3F5FA; --card:#FFFFFF; --text:#1B2233; --muted:#6B7280;
+  --border:#E7E9F1; --green:#178A4C; --green-soft:#E7F6EE;
+  --red:#D9362E; --red-soft:#FDEAE9; --blue:#2563EB; --blue-soft:#EAF1FE;
+  --amber:#D97706; --amber-soft:#FEF3E2;
+  --radius:18px; --radius-sm:12px;
+  --shadow:0 4px 18px rgba(15,37,87,0.08);
+  --shadow-lg:0 10px 30px rgba(15,37,87,0.16);
+}
+[data-theme="dark"]{
+  --navy:#13294F; --navy-dark:#07101F; --navy-soft:#1D3868;
+  --gold:#E0B93B; --gold-light:#F0D588; --gold-soft:#2B2716;
+  --bg:#0D1220; --card:#161C2E; --text:#EBEEF7; --muted:#9199B0;
+  --border:#262E45; --green:#33C17E; --green-soft:#123324;
+  --red:#F1594F; --red-soft:#3A1917; --blue:#5B8DEF; --blue-soft:#152848;
+  --amber:#E5A63B; --amber-soft:#332510;
+  --shadow:0 4px 18px rgba(0,0,0,0.35);
+  --shadow-lg:0 10px 34px rgba(0,0,0,0.5);
+}
+*{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+html,body{margin:0; padding:0; width:100%; overflow-x:hidden; background:var(--bg); color:var(--text);
+  font-family:'Plus Jakarta Sans',system-ui,sans-serif; -webkit-font-smoothing:antialiased; transition:background .2s ease, color .2s ease;}
+h1,h2,h3,.font-display{font-family:'Fraunces',serif;}
+button{font-family:inherit;}
+input,select,textarea{font-family:inherit; color:var(--text);}
+::-webkit-scrollbar{width:0; height:0;}
+a{color:var(--navy);}
+
+/* ===== SPLASH ===== */
+#splash{position:fixed; inset:0; background:linear-gradient(160deg,var(--navy) 0%,var(--navy-dark) 100%); z-index:9999;
+  display:flex; flex-direction:column; align-items:center; justify-content:center; color:#fff; gap:14px;}
+#splash svg{width:84px; height:84px;}
+#splash .sname{font-family:'Fraunces',serif; font-size:20px; font-weight:700;}
+#splash .sload{width:120px; height:4px; background:rgba(255,255,255,.18); border-radius:4px; overflow:hidden;}
+#splash .sload::after{content:""; display:block; width:40%; height:100%; background:var(--gold); border-radius:4px; animation:splashbar 1s infinite ease-in-out;}
+@keyframes splashbar{0%{transform:translateX(-100%);} 100%{transform:translateX(340%);}}
+
+#app-shell{max-width:520px; margin:0 auto; min-height:100vh; background:var(--bg); position:relative;
+  display:flex; flex-direction:column; box-shadow:0 0 40px rgba(15,37,87,0.06);}
+
+/* ===== TOPBAR ===== */
+.topbar{position:sticky; top:0; z-index:40; background:linear-gradient(135deg,var(--navy) 0%,var(--navy-dark) 100%);
+  color:#fff; padding:14px 16px 20px; border-radius:0 0 22px 22px;}
+.topbar-row{display:flex; align-items:center; gap:10px;}
+.sbd-logo{width:38px; height:38px; flex:none;}
+.topbar-title{display:flex; flex-direction:column; line-height:1.1;}
+.topbar-title b{font-family:'Fraunces',serif; font-size:16.5px; letter-spacing:.2px;}
+.topbar-title span{font-size:10.5px; opacity:.75; letter-spacing:.4px;}
+.topbar-actions{margin-left:auto; display:flex; gap:6px;}
+.topbar-icon-btn{width:36px; height:36px; border-radius:50%; background:rgba(255,255,255,.12);
+  border:none; color:#fff; display:flex; align-items:center; justify-content:center; cursor:pointer; flex:none;}
+.topbar-icon-btn:active{background:rgba(255,255,255,.22);}
+.balance-card{margin-top:16px; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.14);
+  border-radius:16px; padding:14px 16px;}
+.balance-label{font-size:11.5px; opacity:.75; display:flex; align-items:center; gap:6px;}
+.balance-amount{font-family:'Fraunces',serif; font-size:26px; font-weight:600; margin-top:4px; letter-spacing:.2px;}
+.balance-sub{display:flex; gap:14px; margin-top:12px;}
+.balance-sub-item{flex:1; background:rgba(255,255,255,.07); border-radius:12px; padding:8px 10px;}
+.balance-sub-item .lbl{font-size:10.5px; opacity:.75; display:flex; align-items:center; gap:4px;}
+.balance-sub-item .val{font-size:14px; font-weight:700; margin-top:2px;}
+.balance-sub-item.income .val{color:#8FE3B3;}
+.balance-sub-item.expense .val{color:#FFB3AE;}
+
+/* ===== PAGE CONTENT ===== */
+#page-content{flex:1; padding:16px 14px 100px; animation:fadein .18s ease;}
+@keyframes fadein{from{opacity:0; transform:translateY(4px);} to{opacity:1; transform:translateY(0);}}
+.section-title{font-family:'Fraunces',serif; font-size:17px; font-weight:600; margin:18px 2px 10px;
+  display:flex; align-items:center; justify-content:space-between;}
+.section-title small{font-family:'Plus Jakarta Sans'; font-size:12px; color:var(--gold); font-weight:700; cursor:pointer;}
+.card{background:var(--card); border-radius:var(--radius); padding:14px; box-shadow:var(--shadow); border:1px solid var(--border);}
+.empty-state{text-align:center; padding:34px 18px; color:var(--muted);}
+.empty-state .material-symbols-rounded{font-size:42px; color:var(--gold); opacity:.7;}
+.empty-state p{margin:8px 0 0; font-size:13.5px;}
+
+/* Quick actions grid */
+.quick-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-top:4px;}
+.quick-item{background:var(--card); border-radius:14px; padding:12px 4px; text-align:center; box-shadow:var(--shadow);
+  border:1px solid var(--border); cursor:pointer;}
+.quick-item .material-symbols-rounded{font-size:22px; color:var(--navy);}
+.quick-item span{display:block; font-size:10.5px; margin-top:5px; font-weight:600; color:var(--text);}
+
+/* Chip filter */
+.chip-row{display:flex; gap:8px; overflow-x:auto; padding-bottom:2px;}
+.chip{flex:none; padding:7px 14px; border-radius:999px; background:var(--card); border:1px solid var(--border);
+  font-size:12.5px; font-weight:600; color:var(--muted); cursor:pointer; white-space:nowrap;}
+.chip.active{background:var(--navy); color:#fff; border-color:var(--navy);}
+
+/* Transaction row */
+.tx-row{display:flex; align-items:center; gap:11px; padding:11px 6px; border-bottom:1px solid var(--border); cursor:pointer; position:relative;}
+.tx-row:last-child{border-bottom:none;}
+.tx-icon{width:42px; height:42px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:20px; flex:none;}
+.tx-mid{flex:1; min-width:0;}
+.tx-mid .t1{font-weight:700; font-size:13.7px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+.tx-mid .t2{font-size:11.5px; color:var(--muted); margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+.tx-mid .t3{font-size:10px; color:var(--gold); font-weight:700; margin-top:1px;}
+.tx-right{text-align:right; flex:none;}
+.tx-right .amt{font-weight:800; font-size:13.5px;}
+.tx-right .amt.in{color:var(--green);}
+.tx-right .amt.out{color:var(--red);}
+.tx-right .amt.tf{color:var(--blue);}
+.tx-right .dt{font-size:10.5px; color:var(--muted); margin-top:2px;}
+.date-divider{font-size:11.5px; font-weight:700; color:var(--muted); margin:14px 2px 4px; text-transform:uppercase; letter-spacing:.4px;}
+
+/* Progress bar */
+.pbar-wrap{height:9px; border-radius:6px; background:var(--border); overflow:hidden; position:relative; margin-top:8px;}
+.pbar-fill{height:100%; border-radius:6px; transition:width .3s ease;}
+
+/* Account card */
+.acc-card{display:flex; align-items:center; gap:12px; padding:14px; border-radius:16px; margin-bottom:10px;
+  background:var(--card); box-shadow:var(--shadow); border:1px solid var(--border); cursor:pointer;}
+.acc-avatar{width:46px; height:46px; border-radius:13px; display:flex; align-items:center; justify-content:center; font-size:21px; flex:none; color:#fff;}
+.acc-info{flex:1; min-width:0;}
+.acc-info .n1{font-weight:700; font-size:14px;}
+.acc-info .n2{font-size:11.5px; color:var(--muted); margin-top:2px;}
+.acc-bal{text-align:right;}
+.acc-bal .b1{font-weight:800; font-size:14px;}
+.acc-bal .b2{font-size:10px; color:var(--muted); margin-top:1px;}
+
+/* Debt card */
+.debt-card{padding:14px; border-radius:16px; margin-bottom:10px; background:var(--card); box-shadow:var(--shadow); border:1px solid var(--border);}
+.debt-top{display:flex; justify-content:space-between; align-items:flex-start; gap:8px;}
+.debt-tag{font-size:10px; font-weight:800; padding:3px 9px; border-radius:999px; letter-spacing:.3px;}
+.debt-tag.hutang{background:var(--red-soft); color:var(--red);}
+.debt-tag.piutang{background:var(--green-soft); color:var(--green);}
+
+/* Budget card */
+.budget-card{padding:14px; border-radius:16px; margin-bottom:10px; background:var(--card); box-shadow:var(--shadow); border:1px solid var(--border);}
+
+/* Recurring card */
+.recur-card{display:flex; align-items:center; gap:11px; padding:13px; border-radius:14px; margin-bottom:9px; background:var(--card); box-shadow:var(--shadow); border:1px solid var(--border); cursor:pointer;}
+.recur-card .ri{width:40px; height:40px; border-radius:11px; background:var(--gold-soft); color:var(--navy); display:flex; align-items:center; justify-content:center; font-size:19px; flex:none;}
+.recur-card .rt{flex:1; min-width:0;}
+.recur-card .rt .r1{font-weight:700; font-size:13.5px;}
+.recur-card .rt .r2{font-size:11px; color:var(--muted); margin-top:2px;}
+.recur-badge{font-size:10px; font-weight:800; padding:3px 8px; border-radius:999px; background:var(--blue-soft); color:var(--blue);}
+.recur-badge.paused{background:var(--border); color:var(--muted);}
+
+/* Insight card */
+.insight-card{border-radius:16px; padding:14px; margin-bottom:12px; background:linear-gradient(135deg, var(--gold-soft), var(--card)); border:1px solid var(--gold); display:flex; gap:11px; align-items:flex-start;}
+.insight-card .ii{width:36px; height:36px; border-radius:11px; background:var(--gold); color:var(--navy-dark); display:flex; align-items:center; justify-content:center; font-size:19px; flex:none;}
+.insight-card .it{font-size:12.8px; line-height:1.5;}
+.insight-card .it b{color:var(--navy);}
+
+/* Backup reminder banner */
+.reminder-banner{display:flex; align-items:center; gap:10px; background:var(--amber-soft); border:1px solid var(--amber); border-radius:14px; padding:11px 12px; margin-bottom:14px;}
+.reminder-banner .material-symbols-rounded{color:var(--amber); font-size:22px; flex:none;}
+.reminder-banner .rb-text{flex:1; font-size:12px; color:var(--text); line-height:1.4;}
+.reminder-banner button{flex:none; background:var(--amber); color:#fff; border:none; padding:7px 12px; border-radius:10px; font-size:11.5px; font-weight:700; cursor:pointer;}
+.reminder-banner .rb-close{background:none; color:var(--muted); padding:0; width:22px; height:22px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:16px;}
+
+/* ===== BOTTOM NAV (mobile) ===== */
+.bottomnav{position:fixed; bottom:0; left:50%; transform:translateX(-50%); width:100%; max-width:520px;
+  background:var(--card); border-top:1px solid var(--border); display:flex; z-index:50; padding:6px 4px calc(6px + env(safe-area-inset-bottom));
+  box-shadow:0 -4px 18px rgba(15,37,87,0.07);}
+.nav-btn{flex:1; display:flex; flex-direction:column; align-items:center; gap:2px; background:none; border:none;
+  padding:6px 2px; color:var(--muted); cursor:pointer; border-radius:10px;}
+.nav-btn .material-symbols-rounded{font-size:23px;}
+.nav-btn span{font-size:10px; font-weight:700;}
+.nav-btn.active{color:var(--navy);}
+.nav-btn.active .material-symbols-rounded{font-variation-settings:'FILL' 1;}
+
+.fab{position:fixed; bottom:74px; width:58px; height:58px; border-radius:50%;
+  background:linear-gradient(135deg,var(--gold-light),var(--gold)); border:none; color:var(--navy-dark); box-shadow:var(--shadow-lg);
+  display:flex; align-items:center; justify-content:center; cursor:pointer; z-index:55; right:16px;}
+.fab .material-symbols-rounded{font-size:28px; font-weight:700;}
+
+/* ===== SIDEBAR (desktop) ===== */
+.sidebar-nav{display:none;}
+
+/* ===== MODAL ===== */
+.modal-overlay{position:fixed; inset:0; background:rgba(10,20,45,.5); z-index:100; display:flex; align-items:flex-end;
+  justify-content:center; opacity:0; pointer-events:none; transition:opacity .2s ease;}
+.modal-overlay.open{opacity:1; pointer-events:auto;}
+.modal-sheet{background:var(--card); width:100%; max-width:520px; border-radius:22px 22px 0 0; max-height:92vh; overflow-y:auto;
+  transform:translateY(30px); transition:transform .22s ease; padding-bottom:env(safe-area-inset-bottom);}
+.modal-overlay.open .modal-sheet{transform:translateY(0);}
+.modal-handle{width:38px; height:4px; background:var(--border); border-radius:4px; margin:10px auto 4px;}
+.modal-head{display:flex; align-items:center; justify-content:space-between; padding:8px 16px 6px;}
+.modal-head h3{font-size:16px; margin:0; font-family:'Fraunces',serif;}
+.modal-close{width:32px; height:32px; border-radius:50%; border:none; background:var(--bg); color:var(--text); display:flex; align-items:center; justify-content:center; cursor:pointer; flex:none;}
+.modal-body{padding:6px 16px 20px;}
+
+.field{margin-bottom:13px;}
+.field label{display:block; font-size:12px; font-weight:700; color:var(--muted); margin-bottom:6px;}
+.field label .unit-badge{color:var(--gold); font-weight:800;}
+.field input[type=text], .field input[type=number], .field input[type=date], .field textarea, .field select{
+  width:100%; padding:12px 13px; border-radius:12px; border:1.5px solid var(--border); background:var(--bg);
+  font-size:14.5px; color:var(--text); outline:none;}
+.field input:focus, .field select:focus, .field textarea:focus{border-color:var(--gold);}
+.field textarea{resize:vertical; min-height:60px;}
+.field .hint{font-size:11px; color:var(--muted); margin-top:5px;}
+.amount-input input{font-weight:700; font-size:17px;}
+.field-row{display:flex; gap:10px;}
+.field-row .field{flex:1;}
+
+.type-toggle{display:flex; gap:8px; margin-bottom:14px;}
+.type-toggle button{flex:1; padding:11px 4px; border-radius:12px; border:1.5px solid var(--border); background:var(--bg);
+  font-weight:700; font-size:13px; color:var(--muted); cursor:pointer; display:flex; align-items:center; justify-content:center; gap:5px;}
+.type-toggle button.on-expense{border-color:var(--red); background:var(--red-soft); color:var(--red);}
+.type-toggle button.on-income{border-color:var(--green); background:var(--green-soft); color:var(--green);}
+.type-toggle button.on-transfer{border-color:var(--blue); background:var(--blue-soft); color:var(--blue);}
+
+.icon-grid{display:grid; grid-template-columns:repeat(7,1fr); gap:8px; max-height:180px; overflow-y:auto; padding:2px;}
+.icon-pick{aspect-ratio:1; border-radius:11px; background:var(--bg); border:1.5px solid var(--border); display:flex;
+  align-items:center; justify-content:center; font-size:18px; cursor:pointer;}
+.icon-pick.selected{border-color:var(--gold); background:var(--gold-soft);}
+
+.color-grid{display:flex; gap:8px; flex-wrap:wrap;}
+.color-pick{width:30px; height:30px; border-radius:50%; cursor:pointer; border:2px solid transparent;}
+.color-pick.selected{border-color:var(--navy); transform:scale(1.1);}
+
+.btn-primary{width:100%; padding:14px; border-radius:14px; border:none; background:var(--navy); color:#fff;
+  font-weight:800; font-size:14.5px; cursor:pointer; margin-top:6px;}
+.btn-primary:active{background:var(--navy-dark);}
+.btn-danger{width:100%; padding:13px; border-radius:14px; border:1.5px solid var(--red); background:var(--red-soft); color:var(--red);
+  font-weight:800; font-size:13.5px; cursor:pointer; margin-top:8px;}
+.btn-ghost{width:100%; padding:13px; border-radius:14px; border:1.5px solid var(--border); background:var(--card); color:var(--text);
+  font-weight:700; font-size:13.5px; cursor:pointer; margin-top:8px;}
+.btn-row{display:flex; gap:8px; margin-top:6px;}
+.btn-row .btn-primary, .btn-row .btn-danger, .btn-row .btn-ghost{margin-top:0;}
+.btn-small{padding:7px 12px; border-radius:10px; border:1.5px solid var(--border); background:var(--bg); color:var(--text); font-size:11.5px; font-weight:700; cursor:pointer;}
+
+.attach-row{display:flex; gap:8px; flex-wrap:wrap; margin-top:8px;}
+.attach-thumb{width:60px; height:60px; border-radius:10px; object-fit:cover; border:1px solid var(--border); cursor:pointer;}
+.attach-add{width:60px; height:60px; border-radius:10px; border:1.5px dashed var(--border); display:flex; align-items:center;
+  justify-content:center; color:var(--muted); cursor:pointer; background:var(--bg);}
+
+.split-row{display:flex; gap:8px; align-items:flex-end; margin-bottom:9px;}
+.split-row select{flex:1.4;}
+.split-row .amt-field{flex:1;}
+.split-row .split-remove{flex:none; width:38px; height:44px; border-radius:10px; border:1.5px solid var(--border); background:var(--bg); color:var(--red); display:flex; align-items:center; justify-content:center; cursor:pointer;}
+.split-total-row{display:flex; justify-content:space-between; font-size:12.5px; font-weight:700; padding:9px 2px; border-top:1px dashed var(--border); margin-top:4px;}
+.split-total-row.mismatch{color:var(--red);}
+.split-total-row.match{color:var(--green);}
+
+/* More page list */
+.list-item{display:flex; align-items:center; gap:12px; padding:13px 4px; border-bottom:1px solid var(--border); cursor:pointer;}
+.list-item:last-child{border-bottom:none;}
+.list-item .li-icon{width:38px; height:38px; border-radius:11px; background:var(--gold-soft); color:var(--navy);
+  display:flex; align-items:center; justify-content:center; font-size:19px; flex:none;}
+.list-item .li-text{flex:1;}
+.list-item .li-text .lt1{font-weight:700; font-size:13.7px;}
+.list-item .li-text .lt2{font-size:11.5px; color:var(--muted); margin-top:1px;}
+.list-item .material-symbols-rounded.chev{color:var(--muted); font-size:19px;}
+.list-item .li-toggle{margin-left:auto; flex:none;}
+
+.subcat-row{padding-left:44px; padding-top:9px; padding-bottom:9px;}
+
+.switch{position:relative; display:inline-block; width:42px; height:24px; flex:none;}
+.switch input{opacity:0; width:0; height:0;}
+.switch .slider{position:absolute; cursor:pointer; inset:0; background:var(--border); border-radius:24px; transition:.2s;}
+.switch .slider::before{content:""; position:absolute; height:18px; width:18px; left:3px; bottom:3px; background:#fff; border-radius:50%; transition:.2s;}
+.switch input:checked + .slider{background:var(--navy);}
+.switch input:checked + .slider::before{transform:translateX(18px);}
+
+.toast{position:fixed; bottom:90px; left:50%; transform:translateX(-50%); background:var(--navy-dark); color:#fff;
+  padding:11px 14px 11px 18px; border-radius:999px; font-size:13px; font-weight:600; z-index:200; opacity:0; pointer-events:none;
+  transition:opacity .25s ease, transform .25s ease; box-shadow:var(--shadow-lg); white-space:nowrap; display:flex; align-items:center; gap:12px;}
+.toast.show{opacity:1; transform:translateX(-50%) translateY(-6px); pointer-events:auto;}
+.toast .toast-undo{color:var(--gold-light); font-weight:800; cursor:pointer; background:none; border:none; font-size:13px;}
+
+.badge-check{display:inline-flex; align-items:center; gap:6px; font-size:12.5px; color:var(--green); font-weight:700; padding:8px 0;}
+.checklist-grid{display:grid; grid-template-columns:1fr 1fr; gap:6px 10px; margin-top:4px;}
+.checklist-grid .ck{display:flex; align-items:center; gap:6px; font-size:11.8px; color:var(--text); font-weight:600;}
+.checklist-grid .ck .material-symbols-rounded{font-size:16px; color:var(--green);}
+
+.donut-legend{display:flex; flex-direction:column; gap:8px; margin-top:12px;}
+.legend-row{display:flex; align-items:center; gap:9px; font-size:12.5px;}
+.legend-dot{width:10px; height:10px; border-radius:3px; flex:none;}
+.legend-row .lname{flex:1; font-weight:600;}
+.legend-row .lval{font-weight:800;}
+
+.search-bar{display:flex; align-items:center; gap:8px; background:var(--card); border:1px solid var(--border); border-radius:14px;
+  padding:10px 13px; margin-bottom:12px;}
+.search-bar input{border:none; outline:none; background:none; flex:1; font-size:13.5px;}
+.search-bar .material-symbols-rounded{color:var(--muted); font-size:19px;}
+.filter-toggle-btn{display:flex; align-items:center; gap:6px; background:var(--card); border:1px solid var(--border); border-radius:12px; padding:9px 13px; font-size:12.5px; font-weight:700; color:var(--navy); cursor:pointer; margin-bottom:10px;}
+.filter-panel{background:var(--card); border:1px solid var(--border); border-radius:16px; padding:14px; margin-bottom:14px;}
+
+.trend-chart-wrap{overflow-x:auto;}
+.trend-legend{display:flex; gap:16px; margin-top:10px; font-size:11.5px; justify-content:center;}
+.trend-legend .tl{display:flex; align-items:center; gap:6px;}
+.trend-legend .dot{width:9px; height:9px; border-radius:3px;}
+
+.footer-brand{text-align:center; padding:22px 10px 6px; color:var(--muted); font-size:11px; line-height:1.7;}
+.footer-brand b{color:var(--navy);}
+.footer-brand a{color:var(--navy); text-decoration:none; font-weight:700;}
+
+.welcome-overlay{position:fixed; inset:0; background:rgba(10,20,45,.55); z-index:300; display:flex; align-items:center;
+  justify-content:center; padding:20px;}
+.welcome-card{background:var(--card); border-radius:22px; padding:26px 22px; max-width:400px; width:100%; text-align:center; box-shadow:var(--shadow-lg);}
+.welcome-card h2{font-size:19px; margin:12px 0 4px;}
+.welcome-card p{font-size:13px; color:var(--muted); margin:0 0 14px;}
+
+/* Tutorial overlay */
+.tut-overlay{position:fixed; inset:0; background:rgba(10,20,45,.6); z-index:300; display:flex; align-items:center; justify-content:center; padding:20px;}
+.tut-card{background:var(--card); border-radius:22px; padding:26px 22px; max-width:400px; width:100%; text-align:center; box-shadow:var(--shadow-lg);}
+.tut-card .material-symbols-rounded.tut-icon{font-size:46px; color:var(--gold); background:var(--gold-soft); width:80px; height:80px; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 14px;}
+.tut-card h3{font-size:17px; margin:0 0 8px;}
+.tut-card p{font-size:13px; color:var(--muted); line-height:1.6; margin:0 0 18px;}
+.tut-dots{display:flex; justify-content:center; gap:6px; margin-bottom:16px;}
+.tut-dots .d{width:7px; height:7px; border-radius:50%; background:var(--border);}
+.tut-dots .d.active{background:var(--gold); width:18px; border-radius:4px;}
+
+/* Print styles for PDF export */
+#printArea{display:none;}
+@media print{
+  body *{visibility:hidden;}
+  #printArea, #printArea *{visibility:visible;}
+  #printArea{display:block !important; position:absolute; top:0; left:0; width:100%; padding:20px; color:#000; background:#fff;}
+  .no-print{display:none !important;}
+}
+
+/* ===================== DESKTOP RESPONSIVE — SaaS Dashboard ===================== */
+/* mobile-first defaults for new desktop-only elements */
+.page-header-title, .page-header-sub{display:none;}
+.kpi-row{display:none;}
+
+@media (min-width:900px){
+  html, body{background:var(--bg);}
+  #app-shell{max-width:none; width:100%; margin:0; display:grid; grid-template-columns:264px 1fr; align-items:start; box-shadow:none; min-height:100vh;}
+
+  /* ---- Sidebar: permanent, full SaaS style ---- */
+  .sidebar-nav{display:flex; flex-direction:column; grid-row:1/3; grid-column:1; background:var(--navy-dark);
+    min-height:100vh; height:100vh; padding:20px 16px; position:sticky; top:0; align-self:start; overflow-y:auto;
+    border-right:1px solid rgba(255,255,255,.06);}
+  .sidebar-nav .sb-logo-row{display:flex; align-items:center; gap:10px; padding:4px 8px 20px; color:#fff;
+    border-bottom:1px solid rgba(255,255,255,.08); margin-bottom:16px;}
+  .sidebar-nav .sb-logo-row svg{width:32px; height:32px;}
+  .sidebar-nav .sb-logo-row b{font-family:'Fraunces',serif; font-size:14.5px; line-height:1.25;}
+  .sidebar-nav-label{color:rgba(255,255,255,.35); font-size:10px; font-weight:800; letter-spacing:.8px; text-transform:uppercase;
+    padding:0 12px; margin:14px 0 6px;}
+  .sidebar-nav .snav-btn{display:flex; align-items:center; gap:12px; padding:10px 12px; border-radius:10px; color:rgba(255,255,255,.6);
+    background:none; border:none; border-left:3px solid transparent; cursor:pointer; font-size:13.2px; font-weight:700; margin-bottom:2px;
+    text-align:left; width:100%; transition:background .15s ease, color .15s ease;}
+  .sidebar-nav .snav-btn .material-symbols-rounded{font-size:19px; flex:none;}
+  .sidebar-nav .snav-btn:hover{background:rgba(255,255,255,.06); color:#fff;}
+  .sidebar-nav .snav-btn.active{background:rgba(201,162,39,.14); color:#fff; border-left-color:var(--gold);}
+  .sidebar-nav .snav-btn.active .material-symbols-rounded{font-variation-settings:'FILL' 1; color:var(--gold);}
+  .sidebar-nav .snav-fab{margin-top:14px; display:flex; align-items:center; justify-content:center; gap:8px; background:var(--gold); color:var(--navy-dark);
+    padding:12px; border-radius:11px; font-weight:800; font-size:12.8px; border:none; cursor:pointer; transition:filter .15s ease;}
+  .sidebar-nav .snav-fab:hover{filter:brightness(1.08);}
+  .sidebar-foot{margin-top:auto; color:rgba(255,255,255,.35); font-size:10px; padding:14px 10px 0; line-height:1.6;
+    border-top:1px solid rgba(255,255,255,.08);}
+
+  /* ---- Top header: slim SaaS admin bar ---- */
+  .topbar{grid-column:2; border-radius:0; position:sticky; top:0; z-index:40; background:var(--card); color:var(--text);
+    padding:14px 30px; border-bottom:1px solid var(--border); box-shadow:none;}
+  .topbar-row{align-items:center;}
+  .sbd-logo{display:none;}
+  .brand-title, .brand-tagline{display:none;}
+  .page-header-title{display:block; font-size:19px; font-weight:700; color:var(--text);}
+  .page-header-sub{display:block; font-size:12px; color:var(--muted); margin-top:2px; font-weight:500;}
+  .topbar-actions{gap:8px;}
+  .topbar-icon-btn{background:var(--bg); color:var(--text); border:1px solid var(--border);}
+  .topbar-icon-btn:hover{background:var(--border);}
+  .topbar .balance-card{display:none;}
+
+  /* ---- KPI stat row (dashboard) ---- */
+  .kpi-row{display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:22px;}
+  .kpi-card{background:var(--card); border:1px solid var(--border); border-radius:16px; padding:16px 18px; display:flex; align-items:center; gap:13px;
+    box-shadow:var(--shadow); transition:transform .15s ease, box-shadow .15s ease;}
+  .kpi-card:hover{transform:translateY(-2px); box-shadow:var(--shadow-lg);}
+  .kpi-icon{width:44px; height:44px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:21px; flex:none;}
+  .kpi-text{min-width:0;}
+  .kpi-label{font-size:11px; color:var(--muted); font-weight:700; white-space:nowrap;}
+  .kpi-value{font-family:'Fraunces',serif; font-size:18px; font-weight:600; margin-top:3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+
+  /* ---- Main content ---- */
+  #page-content{grid-column:2; padding:24px 30px 50px; max-width:1236px;}
+  .bottomnav{display:none;}
+  .fab{display:none;}
+  .page-subheader{display:none !important;}
+
+  /* dashboard two-column grid */
+  .dashboard-grid{display:grid; grid-template-columns:1.5fr 1fr; gap:22px; align-items:start;}
+  .dg-side{position:sticky; top:88px;}
+
+  /* generic multi-column card grid (accounts, budgets, debts, recurring) */
+  .grid-cards{display:grid; grid-template-columns:repeat(auto-fill, minmax(320px,1fr)); gap:14px;}
+  .grid-cards .acc-card, .grid-cards .budget-card, .grid-cards .debt-card, .grid-cards .recur-card{margin-bottom:0;}
+
+  .quick-grid{grid-template-columns:repeat(4,1fr);}
+
+  /* page-level CTA buttons: no longer full-width stretch on desktop */
+  .page-action-btn{width:auto; min-width:230px; padding:12px 22px; margin-top:14px;}
+
+  /* card polish */
+  .card, .acc-card, .budget-card, .debt-card, .recur-card{border-radius:14px;}
+  .acc-card:hover, .budget-card:hover, .debt-card:hover, .recur-card:hover, .list-item:hover{
+    box-shadow:var(--shadow-lg); transform:translateY(-1px);}
+  .acc-card, .budget-card, .debt-card, .recur-card{transition:transform .15s ease, box-shadow .15s ease; cursor:pointer;}
+  .tx-row:hover{background:var(--bg); border-radius:10px;}
+  .quick-item:hover{transform:translateY(-2px); box-shadow:var(--shadow-lg);}
+  .quick-item{transition:transform .15s ease, box-shadow .15s ease;}
+  .list-item{transition:background .15s ease;}
+  .list-item:hover{background:var(--bg); border-radius:10px;}
+
+  .modal-overlay{align-items:center;}
+  .modal-sheet{border-radius:20px; max-width:480px; margin:0 auto; box-shadow:var(--shadow-lg);}
+  .modal-overlay.open .modal-sheet{transform:translateY(0) scale(1);}
+}
+
+@media (min-width:1400px){
+  .dashboard-grid{grid-template-columns:1.7fr 1fr;}
+}
+</style>
+
+</head>
+<body>
+
+<div id="splash">
+  <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="32" cy="32" r="30" fill="#0A1A3D" stroke="#C9A227" stroke-width="2"/>
+    <path d="M10 40 A24 24 0 0 1 14 16" fill="none" stroke="#C9A227" stroke-width="2.2" stroke-linecap="round" opacity="0.65"/>
+    <text x="24" y="41" font-family="Fraunces, serif" font-weight="700" font-size="26" fill="#FFFFFF" text-anchor="middle">S</text>
+    <text x="42" y="41" font-family="Fraunces, serif" font-weight="700" font-size="26" fill="#C9A227" text-anchor="middle">B</text>
+  </svg>
+  <div class="sname">SBD Smart Finance</div>
+  <div class="sload"></div>
+</div>
+
+<div id="app-shell" style="display:none;">
+
+  <nav class="sidebar-nav">
+    <div class="sb-logo-row">
+      <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="32" cy="32" r="30" fill="#0A1A3D" stroke="#C9A227" stroke-width="2"/>
+        <text x="24" y="41" font-family="Fraunces, serif" font-weight="700" font-size="26" fill="#FFFFFF" text-anchor="middle">S</text>
+        <text x="42" y="41" font-family="Fraunces, serif" font-weight="700" font-size="26" fill="#C9A227" text-anchor="middle">B</text>
+      </svg>
+      <b>SBD Smart Finance</b>
+    </div>
+    <button class="snav-fab" onclick="openTransactionModal()"><span class="material-symbols-rounded">add</span><span data-t="new_transaction">Transaksi Baru</span></button>
+    <div class="sidebar-nav-label" data-t="sidebar_menu">MENU</div>
+    <button class="snav-btn" data-page="dashboard" onclick="switchPage('dashboard')"><span class="material-symbols-rounded">home</span><span data-t="nav_dashboard">Ikhtisar</span></button>
+    <button class="snav-btn" data-page="transactions" onclick="switchPage('transactions')"><span class="material-symbols-rounded">receipt_long</span><span data-t="nav_transactions">Transaksi</span></button>
+    <button class="snav-btn" data-page="reports" onclick="switchPage('reports')"><span class="material-symbols-rounded">bar_chart</span><span data-t="nav_reports">Laporan</span></button>
+    <div class="sidebar-nav-label" data-t="sidebar_planning">PERENCANAAN</div>
+    <button class="snav-btn" data-page="budgets" onclick="switchPage('budgets')"><span class="material-symbols-rounded">pie_chart</span><span data-t="nav_budgets">Anggaran</span></button>
+    <button class="snav-btn" data-page="debts" onclick="switchPage('debts')"><span class="material-symbols-rounded">handshake</span><span data-t="nav_debts">Hutang</span></button>
+    <button class="snav-btn" data-page="recurring" onclick="switchPage('recurring')"><span class="material-symbols-rounded">event_repeat</span><span data-t="recurring_tx">Transaksi Berulang</span></button>
+    <div class="sidebar-nav-label" data-t="sidebar_other">LAINNYA</div>
+    <button class="snav-btn" data-page="accounts" onclick="switchPage('accounts')"><span class="material-symbols-rounded">account_balance</span><span data-t="accounts">Rekening</span></button>
+    <button class="snav-btn" data-page="categories" onclick="switchPage('categories')"><span class="material-symbols-rounded">category</span><span data-t="categories">Kategori</span></button>
+    <button class="snav-btn" data-page="more" onclick="switchPage('more')"><span class="material-symbols-rounded">menu</span><span data-t="nav_more">Pengaturan</span></button>
+    <div class="sidebar-foot">SBD Smart Finance<br>by SB-Digital &middot; 100% Offline</div>
+  </nav>
+
+
+  <header class="topbar">
+    <div class="topbar-row">
+      <svg class="sbd-logo" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="32" cy="32" r="30" fill="#0A1A3D" stroke="#C9A227" stroke-width="2"/>
+        <path d="M10 40 A24 24 0 0 1 14 16" fill="none" stroke="#C9A227" stroke-width="2.2" stroke-linecap="round" opacity="0.65"/>
+        <text x="24" y="41" font-family="Fraunces, serif" font-weight="700" font-size="26" fill="#FFFFFF" text-anchor="middle">S</text>
+        <text x="42" y="41" font-family="Fraunces, serif" font-weight="700" font-size="26" fill="#C9A227" text-anchor="middle">B</text>
+      </svg>
+      <div class="topbar-title">
+        <b class="brand-title">SBD Smart Finance</b>
+        <span class="brand-tagline" data-t="tagline">by SB-Digital &middot; 100% Offline</span>
+        <b class="page-header-title" id="pageHeaderTitle">Ikhtisar</b>
+        <span class="page-header-sub" id="pageHeaderSub">&nbsp;</span>
+      </div>
+      <div class="topbar-actions">
+        <button class="topbar-icon-btn" id="installBtn" style="display:none;" onclick="triggerInstall()" title="Install App"><span class="material-symbols-rounded">install_mobile</span></button>
+        <button class="topbar-icon-btn" onclick="toggleTheme()" title="Tema"><span class="material-symbols-rounded" id="themeIcon">dark_mode</span></button>
+        <button class="topbar-icon-btn" onclick="openBackupModal()" title="Backup"><span class="material-symbols-rounded">cloud_sync</span></button>
+      </div>
+    </div>
+
+    <div class="balance-card">
+      <div class="balance-label"><span class="material-symbols-rounded" style="font-size:14px">account_balance_wallet</span> <span data-t="total_balance">Total Saldo Semua Rekening</span> (IDR)</div>
+      <div class="balance-amount" id="topTotalBalance">Rp 0</div>
+      <div class="balance-sub">
+        <div class="balance-sub-item income">
+          <div class="lbl"><span class="material-symbols-rounded" style="font-size:13px">south_west</span> <span data-t="income_month">Pemasukan (Bln ini)</span></div>
+          <div class="val" id="topIncome">Rp 0</div>
+        </div>
+        <div class="balance-sub-item expense">
+          <div class="lbl"><span class="material-symbols-rounded" style="font-size:13px">north_east</span> <span data-t="expense_month">Pengeluaran (Bln ini)</span></div>
+          <div class="val" id="topExpense">Rp 0</div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main id="page-content"></main>
+
+  <button class="fab" onclick="openTransactionModal()"><span class="material-symbols-rounded">add</span></button>
+
+  <nav class="bottomnav">
+    <button class="nav-btn" data-page="dashboard" onclick="switchPage('dashboard')">
+      <span class="material-symbols-rounded">home</span><span data-t="nav_dashboard">Ikhtisar</span>
+    </button>
+    <button class="nav-btn" data-page="transactions" onclick="switchPage('transactions')">
+      <span class="material-symbols-rounded">receipt_long</span><span data-t="nav_transactions">Transaksi</span>
+    </button>
+    <button class="nav-btn" data-page="budgets" onclick="switchPage('budgets')">
+      <span class="material-symbols-rounded">pie_chart</span><span data-t="nav_budgets">Anggaran</span>
+    </button>
+    <button class="nav-btn" data-page="debts" onclick="switchPage('debts')">
+      <span class="material-symbols-rounded">handshake</span><span data-t="nav_debts">Hutang</span>
+    </button>
+    <button class="nav-btn" data-page="more" onclick="switchPage('more')">
+      <span class="material-symbols-rounded">menu</span><span data-t="nav_more">Lainnya</span>
+    </button>
+  </nav>
+
+</div>
+
+<div id="modalRoot"></div>
+<div id="toastRoot" class="toast"></div>
+<div id="printArea"></div>
+
+<script>
+/* =========================================================================
+   SBD SMART FINANCE — PRO EDITION
+   Offline-first personal finance app. IndexedDB storage. No login, no limits.
+   ========================================================================= */
+
+const OLD_LS_KEY = "sbd_smart_finance_v1";
+const WA_NUMBER = "0895634927779";
+const SBD_WEBSITE = "https://solusibarokahdigital.biz.id/";
+const BACKUP_REMINDER_DAYS = 7;
+
+const CURRENCIES = {
+  IDR:{symbol:"Rp", name:"Rupiah Indonesia"},
+  USD:{symbol:"$", name:"Dolar Amerika Serikat"},
+  JPY:{symbol:"¥", name:"Yen Jepang"},
+  SAR:{symbol:"﷼", name:"Riyal Arab Saudi"},
+  CNY:{symbol:"¥", name:"Yuan Tiongkok"},
+  INR:{symbol:"₹", name:"Rupee India"}
+};
+
+let DATA = null;
+let currentPage = "dashboard";
+let txFilterType = "all";
+let txFilterAccount = "all";
+let txFilterCategory = "all";
+let txSearchTerm = "";
+let txDateFrom = "";
+let txDateTo = "";
+let txAmountMin = "";
+let txAmountMax = "";
+let showAdvancedFilter = false;
+let isNavigatingHistory = false;
+let deferredInstallPrompt = null;
+
+/* ---------------- i18n ---------------- */
+const STRINGS = {
+  id: {
+    nav_dashboard:"Ikhtisar", nav_transactions:"Transaksi", nav_budgets:"Anggaran", nav_debts:"Hutang",
+    nav_reports:"Laporan", nav_more:"Lainnya", tagline:"by SB-Digital &middot; 100% Offline",
+    total_balance:"Total Saldo Semua Rekening", income_month:"Pemasukan (Bln ini)", expense_month:"Pengeluaran (Bln ini)",
+    new_transaction:"Transaksi Baru", expense:"Pengeluaran", income:"Pemasukan", transfer:"Transfer",
+    recent_tx:"Transaksi Terbaru", view_all:"Lihat semua", expense_by_category:"Pengeluaran per Kategori",
+    no_expense_month:"Belum ada pengeluaran bulan ini", no_tx_yet:"Belum ada transaksi. Ketuk tombol + untuk mulai mencatat.",
+    accounts:"Rekening", categories:"Kategori", search_placeholder:"Cari transaksi atau kategori...",
+    all:"Semua", all_accounts:"Semua Rekening", all_categories:"Semua Kategori",
+    no_tx_found:"Tidak ada transaksi ditemukan", advanced_filter:"Filter Lanjutan", date_from:"Dari Tanggal",
+    date_to:"Sampai Tanggal", min_amount:"Nominal Minimum", max_amount:"Nominal Maksimum", apply_filter:"Terapkan Filter",
+    reset_filter:"Reset Filter", total_all_accounts:"Total Semua Rekening", add_account:"Tambah Rekening Baru",
+    add_category:"Tambah Kategori Baru", add_subcategory:"Tambah Sub-Kategori", income_cat:"Pemasukan", expense_cat:"Pengeluaran",
+    no_budget:"Belum ada anggaran. Buat anggaran untuk memantau pengeluaran per kategori.",
+    create_budget:"Buat Anggaran Baru", weekly:"Mingguan", monthly:"Bulanan", yearly:"Tahunan",
+    no_debt:"Belum ada catatan hutang/piutang.", add_debt:"Tambah Hutang/Piutang",
+    debt_i_owe:"HUTANG (Saya berhutang)", debt_owed_to_me:"PIUTANG (Orang berhutang)", due_date:"Jatuh tempo",
+    remaining:"sisa", paid_off:"Lunas ✓", paid:"Terbayar", total:"Total", manage_data:"Kelola Data",
+    saved_accounts:"rekening tersimpan", saved_categories:"kategori tersimpan", active_budgets:"anggaran aktif",
+    records:"catatan", recurring_tx:"Transaksi Berulang", scheduled_notes:"jadwal aktif",
+    backup_sync:"Backup & Sinkronisasi", export_data:"Ekspor Data (Backup)", export_hint:"Simpan file .json ke perangkat / cloud pilihan Anda",
+    import_data:"Impor Data", import_hint:"Pulihkan dari file backup .json", export_pdf:"Ekspor Laporan (PDF/Cetak)",
+    export_pdf_hint:"Ringkasan bulanan siap cetak atau simpan PDF", delete_all:"Hapus Semua Data", delete_all_hint:"Mulai ulang dari awal",
+    settings:"Pengaturan", language:"Bahasa", theme:"Tema Tampilan", theme_light:"Terang", theme_dark:"Gelap",
+    tutorial:"Cara Pakai / Panduan", tutorial_hint:"Pelajari fitur-fitur aplikasi",
+    about_app:"Tentang SBD Smart Finance", footer_note:"Data 100% tersimpan di perangkat Anda &mdash; tanpa login, tanpa iklan, tanpa batas.",
+    save:"Simpan", save_changes:"Simpan Perubahan", delete:"Hapus", cancel:"Batal", close:"Tutup",
+    amount:"Jumlah", account:"Rekening", from_account:"Dari Rekening", to_account:"Ke Rekening", category:"Kategori",
+    date:"Tanggal", notes:"Catatan (Opsional)", attachments:"Lampiran Foto (Opsional, tanpa batas jumlah)",
+    split_category:"Split Kategori (Multi-Kategori)", split_hint:"Bagi transaksi ini ke beberapa kategori sekaligus",
+    add_row:"+ Tambah Baris", split_total:"Total Split", must_match:"harus sama dengan jumlah utama",
+    name:"Nama", account_name:"Nama Rekening", account_type:"Jenis Rekening", cash:"Tunai", bank:"Rekening Bank",
+    ewallet:"E-Wallet / Dompet Digital", other:"Lainnya", initial_balance:"Saldo Awal", currency:"Mata Uang",
+    exchange_rate:"Kurs ke Rupiah (manual)", icon:"Ikon", color:"Warna", category_name:"Nama Kategori",
+    parent_category:"Kategori Induk (Opsional)", none_top_level:"Tidak ada (kategori utama)",
+    person_name:"Nama Orang / Pihak", total_amount:"Jumlah Total", budget_limit:"Batas Anggaran", period:"Periode",
+    frequency:"Frekuensi", daily:"Harian", start_date:"Tanggal Mulai", next_occurrence:"Kejadian Berikutnya",
+    active:"Aktif", paused:"Nonaktif", recurring_new:"Transaksi Berulang Baru", recurring_edit:"Edit Transaksi Berulang",
+    already_paid:"Sudah dibayar", add_payment_placeholder:"Tambah pembayaran", record_payment:"+ Catat Pembayaran",
+    welcome_title:"Selamat Datang di<br>SBD Smart Finance", welcome_desc:"Aplikasi kelola keuangan pribadi tanpa login, tanpa iklan, dan tanpa batas. Semua data tersimpan aman di perangkat Anda.",
+    start_now:"Mulai Sekarang", monthly_trend:"Tren Bulanan", vs_last_month:"vs bulan lalu",
+    insight_title:"Insight Keuangan", filter:"Filter", subcategory:"Sub-Kategori",
+    sidebar_menu:"Menu", sidebar_planning:"Perencanaan", sidebar_other:"Lainnya"
+  },
+  en: {
+    nav_dashboard:"Overview", nav_transactions:"Transactions", nav_budgets:"Budgets", nav_debts:"Debts",
+    nav_reports:"Reports", nav_more:"More", tagline:"by SB-Digital &middot; 100% Offline",
+    total_balance:"Total Balance (All Accounts)", income_month:"Income (This Month)", expense_month:"Expense (This Month)",
+    new_transaction:"New Transaction", expense:"Expense", income:"Income", transfer:"Transfer",
+    recent_tx:"Recent Transactions", view_all:"View all", expense_by_category:"Expense by Category",
+    no_expense_month:"No expenses this month yet", no_tx_yet:"No transactions yet. Tap + to start recording.",
+    accounts:"Accounts", categories:"Categories", search_placeholder:"Search transactions or categories...",
+    all:"All", all_accounts:"All Accounts", all_categories:"All Categories",
+    no_tx_found:"No transactions found", advanced_filter:"Advanced Filter", date_from:"From Date",
+    date_to:"To Date", min_amount:"Minimum Amount", max_amount:"Maximum Amount", apply_filter:"Apply Filter",
+    reset_filter:"Reset Filter", total_all_accounts:"Total All Accounts", add_account:"Add New Account",
+    add_category:"Add New Category", add_subcategory:"Add Subcategory", income_cat:"Income", expense_cat:"Expense",
+    no_budget:"No budgets yet. Create a budget to monitor spending per category.",
+    create_budget:"Create New Budget", weekly:"Weekly", monthly:"Monthly", yearly:"Yearly",
+    no_debt:"No debt/credit records yet.", add_debt:"Add Debt/Credit",
+    debt_i_owe:"DEBT (I owe)", debt_owed_to_me:"CREDIT (Owed to me)", due_date:"Due date",
+    remaining:"remaining", paid_off:"Paid off ✓", paid:"Paid", total:"Total", manage_data:"Manage Data",
+    saved_accounts:"accounts saved", saved_categories:"categories saved", active_budgets:"active budgets",
+    records:"records", recurring_tx:"Recurring Transactions", scheduled_notes:"active schedules",
+    backup_sync:"Backup & Sync", export_data:"Export Data (Backup)", export_hint:"Save a .json file to your device / preferred cloud",
+    import_data:"Import Data", import_hint:"Restore from a .json backup file", export_pdf:"Export Report (PDF/Print)",
+    export_pdf_hint:"Print-ready monthly summary", delete_all:"Delete All Data", delete_all_hint:"Start fresh",
+    settings:"Settings", language:"Language", theme:"Display Theme", theme_light:"Light", theme_dark:"Dark",
+    tutorial:"How to Use / Guide", tutorial_hint:"Learn the app features",
+    about_app:"About SBD Smart Finance", footer_note:"All data stays 100% on your device &mdash; no login, no ads, no limits.",
+    save:"Save", save_changes:"Save Changes", delete:"Delete", cancel:"Cancel", close:"Close",
+    amount:"Amount", account:"Account", from_account:"From Account", to_account:"To Account", category:"Category",
+    date:"Date", notes:"Notes (Optional)", attachments:"Photo Attachments (Optional, unlimited)",
+    split_category:"Split Category (Multi-Category)", split_hint:"Split this transaction across multiple categories",
+    add_row:"+ Add Row", split_total:"Split Total", must_match:"must match the main amount",
+    name:"Name", account_name:"Account Name", account_type:"Account Type", cash:"Cash", bank:"Bank Account",
+    ewallet:"E-Wallet / Digital Wallet", other:"Other", initial_balance:"Initial Balance", currency:"Currency",
+    exchange_rate:"Rate to IDR (manual)", icon:"Icon", color:"Color", category_name:"Category Name",
+    parent_category:"Parent Category (Optional)", none_top_level:"None (top-level category)",
+    person_name:"Person / Party Name", total_amount:"Total Amount", budget_limit:"Budget Limit", period:"Period",
+    frequency:"Frequency", daily:"Daily", start_date:"Start Date", next_occurrence:"Next Occurrence",
+    active:"Active", paused:"Paused", recurring_new:"New Recurring Transaction", recurring_edit:"Edit Recurring Transaction",
+    already_paid:"Already paid", add_payment_placeholder:"Add payment", record_payment:"+ Record Payment",
+    welcome_title:"Welcome to<br>SBD Smart Finance", welcome_desc:"A personal finance app with no login, no ads, and no limits. All data stays safely on your device.",
+    start_now:"Get Started", monthly_trend:"Monthly Trend", vs_last_month:"vs last month",
+    insight_title:"Financial Insight", filter:"Filter", subcategory:"Subcategory",
+    sidebar_menu:"Menu", sidebar_planning:"Planning", sidebar_other:"More"
+  }
+};
+function t(key){
+  const lang = (DATA && DATA.settings && DATA.settings.lang) || "id";
+  return (STRINGS[lang] && STRINGS[lang][key]) || (STRINGS.id[key]) || key;
+}
+function applyStaticTranslations(){
+  document.querySelectorAll("[data-t]").forEach(el=>{
+    const key = el.getAttribute("data-t");
+    el.innerHTML = t(key);
+  });
+}
+
+/* ---------------- storage helpers (localStorage, synchronous & universal) ---------------- */
+function lsGet(key){
+  try{
+    const raw = localStorage.getItem(key);
+    return raw ? JSON.parse(raw) : null;
+  }catch(e){ console.error("lsGet failed", e); return null; }
+}
+function lsSet(key, val){
+  try{
+    localStorage.setItem(key, JSON.stringify(val));
+    return true;
+  }catch(e){
+    console.error("lsSet failed", e);
+    return false;
+  }
+}
+
+/* ---------------- utilities ---------------- */
+function uid(prefix){ return (prefix||"id") + "_" + Date.now().toString(36) + Math.random().toString(36).slice(2,8); }
+function formatMoney(n, currencyCode){
+  currencyCode = currencyCode || "IDR";
+  const info = CURRENCIES[currencyCode] || CURRENCIES.IDR;
+  n = Math.round(Number(n)||0);
+  const neg = n < 0; n = Math.abs(n);
+  return (neg?"-":"") + info.symbol + " " + n.toLocaleString("id-ID");
+}
+function formatRupiah(n){ return formatMoney(n,"IDR"); }
+function parseAmountInput(str){
+  if(!str) return 0;
+  const clean = String(str).replace(/[^0-9]/g,"");
+  return clean ? parseInt(clean,10) : 0;
+}
+function formatDateID(dstr){
+  if(!dstr) return "-";
+  const d = new Date(dstr+"T00:00:00");
+  if(isNaN(d)) return dstr;
+  const lang = (DATA && DATA.settings && DATA.settings.lang) || "id";
+  const monthsID = ["Jan","Feb","Mar","Apr","Mei","Jun","Jul","Agu","Sep","Okt","Nov","Des"];
+  const monthsEN = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  const months = lang==="en" ? monthsEN : monthsID;
+  return d.getDate() + " " + months[d.getMonth()] + " " + d.getFullYear();
+}
+function todayStr(){
+  const d = new Date();
+  return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+}
+function addDays(dstr, n){
+  const d = new Date(dstr+"T00:00:00"); d.setDate(d.getDate()+n);
+  return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+}
+function addMonths(dstr, n){
+  const d = new Date(dstr+"T00:00:00"); d.setMonth(d.getMonth()+n);
+  return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+}
+function addYears(dstr, n){
+  const d = new Date(dstr+"T00:00:00"); d.setFullYear(d.getFullYear()+n);
+  return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+}
+function monthKey(dstr){ return (dstr||"").slice(0,7); }
+function prevMonthKey(mKey){
+  const [y,m] = mKey.split("-").map(Number);
+  const d = new Date(y, m-2, 1);
+  return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0");
+}
+function monthLabel(mKey){
+  const lang = (DATA && DATA.settings && DATA.settings.lang) || "id";
+  const monthsID = ["Jan","Feb","Mar","Apr","Mei","Jun","Jul","Agu","Sep","Okt","Nov","Des"];
+  const monthsEN = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  const months = lang==="en" ? monthsEN : monthsID;
+  const [y,m] = mKey.split("-").map(Number);
+  return months[m-1] + " " + String(y).slice(2);
+}
+function escapeHtml(s){
+  if(s===undefined||s===null) return "";
+  return String(s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function showToast(msg, undoFn){
+  const t = document.getElementById("toastRoot");
+  t.innerHTML = escapeHtml(msg) + (undoFn ? `<button class="toast-undo" id="toastUndoBtn">${t_undo()}</button>` : "");
+  t.classList.add("show");
+  if(undoFn){
+    document.getElementById("toastUndoBtn").onclick = ()=>{ undoFn(); t.classList.remove("show"); };
+  }
+  clearTimeout(showToast._tm);
+  showToast._tm = setTimeout(()=>t.classList.remove("show"), undoFn?5000:2200);
+}
+function t_undo(){ return ((DATA&&DATA.settings&&DATA.settings.lang)==="en") ? "UNDO" : "URUNGKAN"; }
+
+/* image compression before storing as base64 */
+function compressImage(file, maxDim, quality){
+  maxDim = maxDim || 1000; quality = quality || 0.72;
+  return new Promise((resolve)=>{
+    const reader = new FileReader();
+    reader.onload = e=>{
+      const img = new Image();
+      img.onload = ()=>{
+        let w = img.width, h = img.height;
+        if(w>maxDim || h>maxDim){
+          if(w>h){ h = Math.round(h*maxDim/w); w = maxDim; }
+          else { w = Math.round(w*maxDim/h); h = maxDim; }
+        }
+        const canvas = document.createElement("canvas");
+        canvas.width = w; canvas.height = h;
+        canvas.getContext("2d").drawImage(img,0,0,w,h);
+        resolve(canvas.toDataURL("image/jpeg", quality));
+      };
+      img.onerror = ()=> resolve(e.target.result);
+      img.src = e.target.result;
+    };
+    reader.onerror = ()=> resolve(null);
+    reader.readAsDataURL(file);
+  });
+}
+
+/* ---------------- default seed data ---------------- */
+function defaultCategories(){
+  return [
+    {id:"cat_makan", name:"Makanan & Minuman", type:"expense", icon:"restaurant", color:"#D9362E", parentId:null},
+    {id:"cat_transport", name:"Transportasi", type:"expense", icon:"directions_car", color:"#2563EB", parentId:null},
+    {id:"cat_belanja", name:"Belanja", type:"expense", icon:"shopping_bag", color:"#9333EA", parentId:null},
+    {id:"cat_tagihan", name:"Tagihan & Utilitas", type:"expense", icon:"bolt", color:"#EA580C", parentId:null},
+    {id:"cat_hiburan", name:"Hiburan", type:"expense", icon:"celebration", color:"#DB2777", parentId:null},
+    {id:"cat_kesehatan", name:"Kesehatan", type:"expense", icon:"health_and_safety", color:"#0D9488", parentId:null},
+    {id:"cat_pendidikan", name:"Pendidikan", type:"expense", icon:"school", color:"#4F46E5", parentId:null},
+    {id:"cat_rumah", name:"Rumah Tangga", type:"expense", icon:"home", color:"#B45309", parentId:null},
+    {id:"cat_zakat", name:"Zakat/Sedekah", type:"expense", icon:"volunteer_activism", color:"#C9A227", parentId:null},
+    {id:"cat_lain_exp", name:"Lainnya", type:"expense", icon:"more_horiz", color:"#6B7280", parentId:null},
+    {id:"cat_gaji", name:"Gaji", type:"income", icon:"payments", color:"#178A4C", parentId:null},
+    {id:"cat_bonus", name:"Bonus/THR", type:"income", icon:"redeem", color:"#0EA5E9", parentId:null},
+    {id:"cat_usaha", name:"Usaha/Bisnis", type:"income", icon:"storefront", color:"#C9A227", parentId:null},
+    {id:"cat_investasi", name:"Investasi", type:"income", icon:"trending_up", color:"#059669", parentId:null},
+    {id:"cat_lain_inc", name:"Lainnya", type:"income", icon:"more_horiz", color:"#6B7280", parentId:null}
+  ];
+}
+function defaultAccounts(){
+  return [
+    {id:"acc_tunai", name:"Dompet Tunai", type:"cash", icon:"payments", color:"#178A4C", initialBalance:0, notes:"", currency:"IDR", exchangeRate:1},
+    {id:"acc_bank", name:"Rekening Bank", type:"bank", icon:"account_balance", color:"#0F2557", initialBalance:0, notes:"", currency:"IDR", exchangeRate:1},
+    {id:"acc_ewallet", name:"E-Wallet", type:"ewallet", icon:"account_balance_wallet", color:"#C9A227", initialBalance:0, notes:"", currency:"IDR", exchangeRate:1}
+  ];
+}
+function emptyData(){
+  return {
+    version:2,
+    accounts: defaultAccounts(),
+    categories: defaultCategories(),
+    transactions: [],
+    budgets: [],
+    debts: [],
+    recurring: [],
+    settings: { onboarded:false, lang:"id", theme:"light", lastBackupDate:null, tutorialSeen:false }
+  };
+}
+
+/* ---------------- storage ---------------- */
+let saveDebounceTimer = null;
+function loadData(){
+  let stored = null;
+  try{
+    stored = lsGet(OLD_LS_KEY);
+  }catch(e){ console.error(e); stored = null; }
+  if(!stored){ DATA = emptyData(); saveDataNow(); return; }
+  DATA = stored;
+  if(!DATA.accounts) DATA.accounts = defaultAccounts();
+  if(!DATA.categories) DATA.categories = defaultCategories();
+  if(!DATA.transactions) DATA.transactions = [];
+  if(!DATA.budgets) DATA.budgets = [];
+  if(!DATA.debts) DATA.debts = [];
+  if(!DATA.recurring) DATA.recurring = [];
+  if(!DATA.settings) DATA.settings = {onboarded:false, lang:"id", theme:"light", lastBackupDate:null, tutorialSeen:false};
+  if(DATA.settings.lang===undefined) DATA.settings.lang = "id";
+  if(DATA.settings.theme===undefined) DATA.settings.theme = "light";
+  if(DATA.settings.tutorialSeen===undefined) DATA.settings.tutorialSeen = false;
+  DATA.accounts.forEach(a=>{ if(!a.currency) a.currency="IDR"; if(!a.exchangeRate) a.exchangeRate=1; });
+  DATA.categories.forEach(c=>{ if(c.parentId===undefined) c.parentId=null; });
+}
+function saveData(){
+  clearTimeout(saveDebounceTimer);
+  saveDebounceTimer = setTimeout(saveDataNow, 300);
+}
+function saveDataNow(){
+  const ok = lsSet(OLD_LS_KEY, DATA);
+  if(!ok) showToast(DATA && DATA.settings && DATA.settings.lang==="en" ? "Storage full, some data may not be saved" : "Penyimpanan penuh, sebagian data mungkin tidak tersimpan");
+}
+
+/* ---------------- computed helpers ---------------- */
+function getAccountBalance(accId){
+  const acc = DATA.accounts.find(a=>a.id===accId);
+  if(!acc) return 0;
+  let bal = Number(acc.initialBalance)||0;
+  DATA.transactions.forEach(tx=>{
+    if(tx.type==="income" && tx.accountId===accId) bal += Number(tx.amount);
+    else if(tx.type==="expense" && tx.accountId===accId) bal -= Number(tx.amount);
+    else if(tx.type==="transfer"){
+      if(tx.accountId===accId) bal -= Number(tx.amount);
+      if(tx.toAccountId===accId) bal += Number(tx.amount);
+    }
+  });
+  return bal;
+}
+function getTotalBalanceIDR(){
+  return DATA.accounts.reduce((sum,a)=> sum + getAccountBalance(a.id) * (Number(a.exchangeRate)||1), 0);
+}
+function getMonthTotals(mKey){
+  mKey = mKey || monthKey(todayStr());
+  let inc=0, exp=0;
+  DATA.transactions.forEach(tx=>{
+    if(monthKey(tx.date)!==mKey) return;
+    const acc = getAccount(tx.accountId);
+    const rate = acc ? (Number(acc.exchangeRate)||1) : 1;
+    if(tx.type==="income") inc += Number(tx.amount)*rate;
+    else if(tx.type==="expense") exp += Number(tx.amount)*rate;
+  });
+  return {income:inc, expense:exp};
+}
+function getCategory(id){ return DATA.categories.find(c=>c.id===id); }
+function getAccount(id){ return DATA.accounts.find(a=>a.id===id); }
+function categoriesByType(type){ return DATA.categories.filter(c=>c.type===type); }
+function topLevelCategories(type){ return DATA.categories.filter(c=>c.type===type && !c.parentId); }
+function subCategories(parentId){ return DATA.categories.filter(c=>c.parentId===parentId); }
+
+/* returns [{categoryId, amount}] regardless of split or simple transaction */
+function txCategoryAmounts(tx){
+  if(tx.type!=="expense" && tx.type!=="income") return [];
+  if(tx.splits && tx.splits.length) return tx.splits.map(s=>({categoryId:s.categoryId, amount:Number(s.amount)}));
+  return [{categoryId:tx.categoryId, amount:Number(tx.amount)}];
+}
+
+function categoryOptionsHtml(type, selectedId){
+  let html = "";
+  topLevelCategories(type).forEach(parent=>{
+    html += `<option value="${parent.id}" ${selectedId===parent.id?'selected':''}>${escapeHtml(parent.name)}</option>`;
+    subCategories(parent.id).forEach(sub=>{
+      html += `<option value="${sub.id}" ${selectedId===sub.id?'selected':''}>&nbsp;&nbsp;&nbsp;&nbsp;↳ ${escapeHtml(sub.name)}</option>`;
+    });
+  });
+  return html;
+}
+
+function getExpenseByCategory(mKey){
+  mKey = mKey || monthKey(todayStr());
+  const map = {};
+  DATA.transactions.forEach(tx=>{
+    if(tx.type!=="expense" || monthKey(tx.date)!==mKey) return;
+    const acc = getAccount(tx.accountId);
+    const rate = acc ? (Number(acc.exchangeRate)||1) : 1;
+    txCategoryAmounts(tx).forEach(ca=>{
+      map[ca.categoryId] = (map[ca.categoryId]||0) + ca.amount*rate;
+    });
+  });
+  return Object.entries(map).map(([catId,total])=>({cat:getCategory(catId), total}))
+    .filter(x=>x.cat).sort((a,b)=>b.total-a.total);
+}
+function getBudgetSpent(budget){
+  let start = budget.startDate, end = budget.endDate;
+  if(!start || !end){
+    const now = new Date();
+    if(budget.period==="weekly"){
+      const day = now.getDay();
+      const monday = new Date(now); monday.setDate(now.getDate()-((day+6)%7));
+      const sunday = new Date(monday); sunday.setDate(monday.getDate()+6);
+      start = monday.toISOString().slice(0,10); end = sunday.toISOString().slice(0,10);
+    } else if(budget.period==="yearly"){
+      start = now.getFullYear()+"-01-01"; end = now.getFullYear()+"-12-31";
+    } else {
+      const y=now.getFullYear(), m=now.getMonth();
+      start = y+"-"+String(m+1).padStart(2,"0")+"-01";
+      const lastDay = new Date(y,m+1,0).getDate();
+      end = y+"-"+String(m+1).padStart(2,"0")+"-"+String(lastDay).padStart(2,"0");
+    }
+  }
+  let spent = 0;
+  DATA.transactions.forEach(tx=>{
+    if(tx.type!=="expense") return;
+    if(tx.date < start || tx.date > end) return;
+    const acc = getAccount(tx.accountId);
+    const rate = acc ? (Number(acc.exchangeRate)||1) : 1;
+    txCategoryAmounts(tx).forEach(ca=>{
+      if(ca.categoryId===budget.categoryId) spent += ca.amount*rate;
+    });
+  });
+  return spent;
+}
+function getDebtPaid(debt){
+  return (debt.payments||[]).reduce((s,p)=>s+Number(p.amount),0);
+}
+function getLast6MonthsKeys(){
+  const keys = [];
+  const now = new Date();
+  for(let i=5;i>=0;i--){
+    const d = new Date(now.getFullYear(), now.getMonth()-i, 1);
+    keys.push(d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0"));
+  }
+  return keys;
+}
+function getInsight(){
+  const mKey = monthKey(todayStr());
+  const pKey = prevMonthKey(mKey);
+  const curr = getExpenseByCategory(mKey);
+  const prevMap = {};
+  getExpenseByCategory(pKey).forEach(x=> prevMap[x.cat.id]=x.total);
+  let best = null;
+  curr.forEach(x=>{
+    const prevVal = prevMap[x.cat.id]||0;
+    if(prevVal>0){
+      const pct = ((x.total-prevVal)/prevVal)*100;
+      if(pct>=15 && (!best || pct>best.pct)){
+        best = {cat:x.cat, pct:Math.round(pct), total:x.total, prevVal};
+      }
+    } else if(x.total>0 && !prevMap[x.cat.id]){
+      // new category spending, lower priority signal - skip unless nothing else found
+    }
+  });
+  const currTotals = getMonthTotals(mKey);
+  const prevTotals = getMonthTotals(pKey);
+  return {best, currTotals, prevTotals, mKey, pKey};
+}
+
+/* ---------------- recurring transaction engine ---------------- */
+function computeNextDate(dateStr, frequency){
+  if(frequency==="daily") return addDays(dateStr,1);
+  if(frequency==="weekly") return addDays(dateStr,7);
+  if(frequency==="yearly") return addYears(dateStr,1);
+  return addMonths(dateStr,1);
+}
+function processDueRecurring(){
+  const today = todayStr();
+  let generated = 0;
+  (DATA.recurring||[]).forEach(r=>{
+    if(!r.active) return;
+    let guard = 0;
+    while(r.nextDate <= today && guard < 500){
+      const payload = {
+        id: uid("tx"), type:r.type, accountId:r.accountId, amount:r.amount, date:r.nextDate,
+        notes:(r.notes||"") , attachments:[], generatedFromRecurringId:r.id
+      };
+      if(r.type==="transfer") payload.toAccountId = r.toAccountId;
+      else if(r.splits && r.splits.length) payload.splits = r.splits;
+      else payload.categoryId = r.categoryId;
+      DATA.transactions.push(payload);
+      r.lastGeneratedDate = r.nextDate;
+      r.nextDate = computeNextDate(r.nextDate, r.frequency);
+      generated++;
+      guard++;
+    }
+  });
+  if(generated>0) saveData();
+  return generated;
+}
+
+/* ---------------- navigation & history (Android back button) ----------------
+   Wrapped defensively: some preview/embed contexts (e.g. sandboxed iframes with
+   about:srcdoc) throw a SecurityError on history.pushState/replaceState. The app
+   must keep working even when the History API is unavailable. */
+let historyUsable = true;
+let historyModalPushed = false;
+function safeHistoryPush(state, url){
+  if(!historyUsable) return false;
+  try{ history.pushState(state, "", url); return true; }
+  catch(e){ historyUsable = false; return false; }
+}
+function safeHistoryReplace(state, url){
+  if(!historyUsable) return false;
+  try{ history.replaceState(state, "", url); return true; }
+  catch(e){ historyUsable = false; return false; }
+}
+function safeHistoryBack(){
+  if(!historyUsable) return false;
+  try{ history.back(); return true; }
+  catch(e){ historyUsable = false; return false; }
+}
+
+function switchPage(page, fromPop){
+  currentPage = page;
+  document.querySelectorAll(".nav-btn, .snav-btn").forEach(b=>{
+    b.classList.toggle("active", b.dataset.page===page);
+  });
+  render();
+  try{ window.scrollTo({top:0, behavior:"instant"}); }catch(e){}
+  if(!fromPop){
+    safeHistoryPush({sbdPage:page}, "#"+page);
+  }
+}
+window.addEventListener("popstate", (e)=>{
+  try{
+    const modalOpen = document.getElementById("activeModalOverlay");
+    if(modalOpen){
+      closeModal(true);
+      return;
+    }
+    const page = (e.state && e.state.sbdPage) || "dashboard";
+    switchPage(page, true);
+  }catch(err){ console.error("popstate handler failed", err); }
+});
+
+
+function render(){
+  updateTopSummary();
+  updateHeaderTitle();
+  const el = document.getElementById("page-content");
+  if(currentPage==="dashboard") el.innerHTML = renderDashboard();
+  else if(currentPage==="transactions") el.innerHTML = renderTransactionsPage();
+  else if(currentPage==="budgets") el.innerHTML = renderBudgetsPage();
+  else if(currentPage==="debts") el.innerHTML = renderDebtsPage();
+  else if(currentPage==="reports") el.innerHTML = renderReportsPage();
+  else if(currentPage==="more") el.innerHTML = renderMorePage();
+  else if(currentPage==="accounts") el.innerHTML = renderAccountsPage();
+  else if(currentPage==="categories") el.innerHTML = renderCategoriesPage();
+  else if(currentPage==="recurring") el.innerHTML = renderRecurringPage();
+  applyStaticTranslations();
+}
+function updateTopSummary(){
+  document.getElementById("topTotalBalance").textContent = formatRupiah(getTotalBalanceIDR());
+  const {income, expense} = getMonthTotals();
+  document.getElementById("topIncome").textContent = formatRupiah(income);
+  document.getElementById("topExpense").textContent = formatRupiah(expense);
+}
+function updateHeaderTitle(){
+  const titleEl = document.getElementById("pageHeaderTitle");
+  const subEl = document.getElementById("pageHeaderSub");
+  if(!titleEl || !subEl) return;
+  const lang = (DATA.settings && DATA.settings.lang) || "id";
+  const map = {
+    dashboard: [t('nav_dashboard'), lang==='en'?"Your financial overview at a glance":"Ringkasan keuangan Anda"],
+    transactions: [t('nav_transactions'), lang==='en'?"All your income, expenses & transfers":"Semua pemasukan, pengeluaran & transfer"],
+    budgets: [t('nav_budgets'), lang==='en'?"Track spending against your limits":"Pantau pengeluaran vs batas anggaran"],
+    debts: [t('nav_debts'), lang==='en'?"Money you owe & money owed to you":"Uang yang Anda hutang & piutang"],
+    reports: [t('nav_reports'), lang==='en'?"Trends & insights over time":"Tren & insight dari waktu ke waktu"],
+    more: [t('nav_more'), lang==='en'?"Data, backup & app settings":"Data, backup & pengaturan aplikasi"],
+    accounts: [t('accounts'), lang==='en'?"Manage your wallets & bank accounts":"Kelola dompet & rekening Anda"],
+    categories: [t('categories'), lang==='en'?"Organize income & expense categories":"Atur kategori pemasukan & pengeluaran"],
+    recurring: [t('recurring_tx'), lang==='en'?"Automate your regular bills & income":"Otomatiskan tagihan & pemasukan rutin"]
+  };
+  const info = map[currentPage] || [t('nav_dashboard'), ""];
+  titleEl.textContent = info[0];
+  subEl.textContent = info[1];
+}
+
+/* ================= DASHBOARD ================= */
+function renderDashboard(){
+  const recent = [...DATA.transactions].sort((a,b)=> (b.date+b.id).localeCompare(a.date+a.id)).slice(0,6);
+  const expByCat = getExpenseByCategory().slice(0,5);
+  const totalExp = expByCat.reduce((s,x)=>s+x.total,0) || 1;
+
+  let donutHtml = "";
+  if(expByCat.length===0){
+    donutHtml = `<div class="empty-state"><span class="material-symbols-rounded">donut_large</span><p data-t="no_expense_month">Belum ada pengeluaran bulan ini</p></div>`;
+  } else {
+    let cum = 0;
+    const R = 60, C = 2*Math.PI*R;
+    let circles = "";
+    expByCat.forEach(x=>{
+      const frac = x.total/totalExp;
+      const dash = frac*C;
+      circles += `<circle cx="80" cy="80" r="${R}" fill="none" stroke="${x.cat.color}" stroke-width="20"
+        stroke-dasharray="${dash} ${C-dash}" stroke-dashoffset="${-cum}" transform="rotate(-90 80 80)"/>`;
+      cum += dash;
+    });
+    const legend = expByCat.map(x=>`
+      <div class="legend-row">
+        <div class="legend-dot" style="background:${x.cat.color}"></div>
+        <div class="lname">${escapeHtml(x.cat.name)}</div>
+        <div class="lval">${formatRupiah(x.total)}</div>
+      </div>`).join("");
+    donutHtml = `
+      <div style="display:flex; align-items:center; gap:14px;">
+        <svg width="160" height="160" viewBox="0 0 160 160">${circles}
+          <circle cx="80" cy="80" r="42" fill="var(--card)"/>
+        </svg>
+        <div style="flex:1;">${legend}</div>
+      </div>`;
+  }
+
+  const txHtml = recent.length ? recent.map(txRowHtml).join("") :
+    `<div class="empty-state"><span class="material-symbols-rounded">receipt_long</span><p data-t="no_tx_yet">Belum ada transaksi. Ketuk tombol + untuk mulai mencatat.</p></div>`;
+
+  const reminderHtml = shouldShowBackupReminder() ? `
+    <div class="reminder-banner">
+      <span class="material-symbols-rounded">cloud_off</span>
+      <div class="rb-text">${backupReminderText()}</div>
+      <button onclick="exportBackup()">${t('export_data')}</button>
+      <button class="rb-close" onclick="dismissBackupReminder()"><span class="material-symbols-rounded" style="font-size:15px;">close</span></button>
+    </div>` : "";
+
+  const insightHtml = renderInsightWidget();
+  const kpiHtml = renderKpiRow();
+
+  return `
+    ${reminderHtml}
+    ${kpiHtml}
+    <div class="dashboard-grid">
+      <div class="dg-main">
+        <div class="quick-grid">
+          <div class="quick-item" onclick="openTransactionModal('expense')"><span class="material-symbols-rounded" style="color:var(--red)">remove_circle</span><span data-t="expense">Pengeluaran</span></div>
+          <div class="quick-item" onclick="openTransactionModal('income')"><span class="material-symbols-rounded" style="color:var(--green)">add_circle</span><span data-t="income">Pemasukan</span></div>
+          <div class="quick-item" onclick="openTransactionModal('transfer')"><span class="material-symbols-rounded" style="color:var(--blue)">sync_alt</span><span data-t="transfer">Transfer</span></div>
+          <div class="quick-item" onclick="switchPage('accounts')"><span class="material-symbols-rounded">account_balance</span><span data-t="accounts">Rekening</span></div>
+        </div>
+
+        ${insightHtml}
+
+        <div class="section-title"><span data-t="expense_by_category">Pengeluaran per Kategori</span> <small onclick="switchPage('reports')">${t('nav_reports')} &rsaquo;</small></div>
+        <div class="card">${donutHtml}</div>
+      </div>
+
+      <div class="dg-side">
+        <div class="section-title"><span data-t="recent_tx">Transaksi Terbaru</span> <small onclick="switchPage('transactions')" data-t="view_all">Lihat semua &rsaquo;</small></div>
+        <div class="card" style="padding:6px 10px;">${txHtml}</div>
+      </div>
+    </div>
+
+    <div class="footer-brand">
+      <b>SBD Smart Finance</b><br>
+      <span data-t="footer_note">Data 100% tersimpan di perangkat Anda &mdash; tanpa login, tanpa iklan, tanpa batas.</span><br>
+      Produk dari <a href="${SBD_WEBSITE}" target="_blank" rel="noopener">SB-Digital</a>
+    </div>
+  `;
+}
+
+function renderKpiRow(){
+  const total = getTotalBalanceIDR();
+  const {income, expense} = getMonthTotals();
+  const net = income - expense;
+  const items = [
+    {label: t('total_balance'), value: formatRupiah(total), icon:"account_balance_wallet", color:"var(--navy)", bg:"var(--gold-soft)"},
+    {label: t('income_month'), value: formatRupiah(income), icon:"south_west", color:"var(--green)", bg:"var(--green-soft)"},
+    {label: t('expense_month'), value: formatRupiah(expense), icon:"north_east", color:"var(--red)", bg:"var(--red-soft)"},
+    {label: DATA.settings.lang==='en'?"Net Balance":"Saldo Bersih", value: formatRupiah(net), icon:"trending_up", color: net>=0?"var(--green)":"var(--red)", bg: net>=0?"var(--green-soft)":"var(--red-soft)"}
+  ];
+  return `
+    <div class="kpi-row">
+      ${items.map(it=>`
+        <div class="kpi-card">
+          <div class="kpi-icon" style="background:${it.bg}; color:${it.color};"><span class="material-symbols-rounded">${it.icon}</span></div>
+          <div class="kpi-text">
+            <div class="kpi-label">${it.label}</div>
+            <div class="kpi-value">${it.value}</div>
+          </div>
+        </div>`).join("")}
+    </div>`;
+}
+
+function renderInsightWidget(){
+  const ins = getInsight();
+  const lang = (DATA.settings.lang)||"id";
+  let text = "";
+  if(ins.best){
+    text = lang==="en"
+      ? `Your spending on <b>${escapeHtml(ins.best.cat.name)}</b> increased <b>${ins.best.pct}%</b> compared to last month (${formatRupiah(ins.best.prevVal)} &rarr; ${formatRupiah(ins.best.total)}).`
+      : `Pengeluaran <b>${escapeHtml(ins.best.cat.name)}</b> naik <b>${ins.best.pct}%</b> dibanding bulan lalu (${formatRupiah(ins.best.prevVal)} &rarr; ${formatRupiah(ins.best.total)}).`;
+  } else if(ins.prevTotals.expense>0){
+    const diff = ins.currTotals.expense - ins.prevTotals.expense;
+    const pct = Math.round((diff/ins.prevTotals.expense)*100);
+    if(Math.abs(pct)>=5){
+      text = lang==="en"
+        ? `Total spending this month is <b>${pct>0?'up':'down'} ${Math.abs(pct)}%</b> ${t('vs_last_month')} (${formatRupiah(ins.currTotals.expense)}).`
+        : `Total pengeluaran bulan ini <b>${pct>0?'naik':'turun'} ${Math.abs(pct)}%</b> ${t('vs_last_month')} (${formatRupiah(ins.currTotals.expense)}).`;
+    }
+  }
+  if(!text){
+    text = lang==="en" ? "Keep recording your transactions to unlock more insights next month." : "Terus catat transaksi Anda untuk mendapatkan insight lebih banyak bulan depan.";
+  }
+  return `
+    <div class="insight-card">
+      <div class="ii"><span class="material-symbols-rounded">insights</span></div>
+      <div class="it"><b data-t="insight_title">Insight Keuangan</b><br>${text}</div>
+    </div>`;
+}
+
+function shouldShowBackupReminder(){
+  if(DATA.settings.backupReminderDismissed===todayStr()) return false;
+  const last = DATA.settings.lastBackupDate;
+  if(!last) return DATA.transactions.length>=3;
+  const days = Math.floor((new Date(todayStr()) - new Date(last))/86400000);
+  return days >= BACKUP_REMINDER_DAYS;
+}
+function backupReminderText(){
+  const lang = DATA.settings.lang;
+  const last = DATA.settings.lastBackupDate;
+  if(!last) return lang==="en" ? "You haven't backed up your data yet. Export it now to keep it safe." : "Anda belum pernah backup data. Ekspor sekarang agar data tetap aman.";
+  return lang==="en" ? `Last backup was on ${formatDateID(last)}. Time for a new backup.` : `Backup terakhir pada ${formatDateID(last)}. Saatnya backup lagi.`;
+}
+function dismissBackupReminder(){
+  DATA.settings.backupReminderDismissed = todayStr();
+  saveData(); render();
+}
+
+function txIconBg(tx){
+  if(tx.type==="income") return "background:var(--green-soft); color:var(--green);";
+  if(tx.type==="expense"){
+    if(tx.splits && tx.splits.length>1) return "background:var(--gold-soft); color:var(--gold);";
+    const cat = getCategory(tx.categoryId);
+    return `background:${cat?cat.color+'22':'#eee'}; color:${cat?cat.color:'#333'};`;
+  }
+  return "background:var(--blue-soft); color:var(--blue);";
+}
+function txIconName(tx){
+  if(tx.type==="transfer") return "sync_alt";
+  if(tx.splits && tx.splits.length>1) return "call_split";
+  const cat = getCategory(tx.categoryId);
+  return cat ? cat.icon : (tx.type==="income"?"payments":"category");
+}
+function txRowHtml(tx){
+  const acc = getAccount(tx.accountId);
+  let title, sub, splitNote="";
+  if(tx.type==="transfer"){
+    const toAcc = getAccount(tx.toAccountId);
+    title = t("transfer");
+    sub = (acc?acc.name:"-") + " &rarr; " + (toAcc?toAcc.name:"-");
+  } else if(tx.splits && tx.splits.length>1){
+    title = (DATA.settings.lang==="en"?"Split (":"Split (") + tx.splits.length + (DATA.settings.lang==="en"?" categories)":" kategori)");
+    sub = (acc?acc.name:"-") + (tx.notes? " &middot; "+escapeHtml(tx.notes) : "");
+  } else {
+    const cat = getCategory(tx.categoryId);
+    title = cat ? cat.name : "-";
+    sub = (acc?acc.name:"-") + (tx.notes? " &middot; "+escapeHtml(tx.notes) : "");
+  }
+  if(tx.generatedFromRecurringId) splitNote = `<div class="t3">⟳ ${DATA.settings.lang==="en"?"Auto (recurring)":"Otomatis (berulang)"}</div>`;
+  const cls = tx.type==="income"?"in":(tx.type==="expense"?"out":"tf");
+  const sign = tx.type==="income"?"+":(tx.type==="expense"?"-":"");
+  const currCode = acc ? acc.currency : "IDR";
+  return `
+    <div class="tx-row" onclick="openTransactionModal(null,'${tx.id}')">
+      <div class="tx-icon" style="${txIconBg(tx)}"><span class="material-symbols-rounded">${txIconName(tx)}</span></div>
+      <div class="tx-mid">
+        <div class="t1">${title}</div>
+        <div class="t2">${sub}</div>
+        ${splitNote}
+      </div>
+      <div class="tx-right">
+        <div class="amt ${cls}">${sign}${formatMoney(tx.amount, currCode)}</div>
+        <div class="dt">${formatDateID(tx.date)}</div>
+      </div>
+    </div>`;
+}
+
+/* ================= TRANSACTIONS PAGE ================= */
+function renderTransactionsPage(){
+  let list = [...DATA.transactions];
+  if(txFilterType!=="all") list = list.filter(t=>t.type===txFilterType);
+  if(txFilterAccount!=="all") list = list.filter(t=>t.accountId===txFilterAccount || t.toAccountId===txFilterAccount);
+  if(txFilterCategory!=="all") list = list.filter(t=> txCategoryAmounts(t).some(ca=>ca.categoryId===txFilterCategory));
+  if(txDateFrom) list = list.filter(t=>t.date >= txDateFrom);
+  if(txDateTo) list = list.filter(t=>t.date <= txDateTo);
+  if(txAmountMin) list = list.filter(t=>Number(t.amount) >= Number(txAmountMin));
+  if(txAmountMax) list = list.filter(t=>Number(t.amount) <= Number(txAmountMax));
+  if(txSearchTerm.trim()){
+    const q = txSearchTerm.toLowerCase();
+    list = list.filter(t=>{
+      const catMatch = txCategoryAmounts(t).some(ca=>{
+        const c = getCategory(ca.categoryId);
+        return c && c.name.toLowerCase().includes(q);
+      });
+      return catMatch || (t.notes||"").toLowerCase().includes(q);
+    });
+  }
+  list.sort((a,b)=> (b.date+b.id).localeCompare(a.date+a.id));
+
+  const groups = {};
+  list.forEach(tx=>{ (groups[tx.date] = groups[tx.date]||[]).push(tx); });
+  const dates = Object.keys(groups).sort().reverse();
+
+  let body = "";
+  if(dates.length===0){
+    body = `<div class="empty-state"><span class="material-symbols-rounded">search_off</span><p data-t="no_tx_found">Tidak ada transaksi ditemukan</p></div>`;
+  } else {
+    dates.forEach(d=>{
+      const dayTotal = groups[d].reduce((s,tx)=> s + (tx.type==="income"?Number(tx.amount):(tx.type==="expense"?-Number(tx.amount):0)), 0);
+      body += `<div class="date-divider" style="display:flex; justify-content:space-between;"><span>${formatDateID(d)}</span><span style="color:${dayTotal>=0?'var(--green)':'var(--red)'}">${dayTotal>=0?'+':''}${formatRupiah(dayTotal)}</span></div>`;
+      body += `<div class="card" style="padding:2px 10px;">` + groups[d].map(txRowHtml).join("") + `</div>`;
+    });
+  }
+
+  const accOptions = `<option value="all">${t('all_accounts')}</option>` + DATA.accounts.map(a=>`<option value="${a.id}" ${txFilterAccount===a.id?'selected':''}>${escapeHtml(a.name)}</option>`).join("");
+  const catOptions = `<option value="all">${t('all_categories')}</option>` + categoryOptionsHtml("expense", txFilterCategory!=='all'?txFilterCategory:null) + categoryOptionsHtml("income", txFilterCategory!=='all'?txFilterCategory:null);
+
+  const filterPanel = showAdvancedFilter ? `
+    <div class="filter-panel">
+      <div class="field"><label data-t="account">Rekening</label><select onchange="txFilterAccount=this.value; render()">${accOptions}</select></div>
+      <div class="field"><label data-t="category">Kategori</label><select onchange="txFilterCategory=this.value; render()">${catOptions}</select></div>
+      <div class="field-row">
+        <div class="field"><label data-t="date_from">Dari Tanggal</label><input type="date" value="${txDateFrom}" onchange="txDateFrom=this.value; render()"></div>
+        <div class="field"><label data-t="date_to">Sampai Tanggal</label><input type="date" value="${txDateTo}" onchange="txDateTo=this.value; render()"></div>
+      </div>
+      <div class="field-row">
+        <div class="field"><label data-t="min_amount">Nominal Minimum</label><input type="text" inputmode="numeric" value="${txAmountMin?Number(txAmountMin).toLocaleString('id-ID'):''}" oninput="this.value=formatLiveAmount(this.value); txAmountMin=parseAmountInput(this.value);"></div>
+        <div class="field"><label data-t="max_amount">Nominal Maksimum</label><input type="text" inputmode="numeric" value="${txAmountMax?Number(txAmountMax).toLocaleString('id-ID'):''}" oninput="this.value=formatLiveAmount(this.value); txAmountMax=parseAmountInput(this.value);"></div>
+      </div>
+      <button class="btn-ghost" onclick="resetAdvancedFilter()" data-t="reset_filter">Reset Filter</button>
+    </div>` : "";
+
+  return `
+    <div class="search-bar">
+      <span class="material-symbols-rounded">search</span>
+      <input type="text" placeholder="${t('search_placeholder')}" value="${escapeHtml(txSearchTerm)}" oninput="txSearchTerm=this.value; render()">
+    </div>
+    <div class="chip-row" style="margin-bottom:10px;">
+      <div class="chip ${txFilterType==='all'?'active':''}" onclick="txFilterType='all'; render()">${t('all')}</div>
+      <div class="chip ${txFilterType==='income'?'active':''}" onclick="txFilterType='income'; render()">${t('income')}</div>
+      <div class="chip ${txFilterType==='expense'?'active':''}" onclick="txFilterType='expense'; render()">${t('expense')}</div>
+      <div class="chip ${txFilterType==='transfer'?'active':''}" onclick="txFilterType='transfer'; render()">${t('transfer')}</div>
+    </div>
+    <div class="filter-toggle-btn" onclick="showAdvancedFilter=!showAdvancedFilter; render()">
+      <span class="material-symbols-rounded" style="font-size:17px;">tune</span> ${t('advanced_filter')}
+      <span class="material-symbols-rounded" style="font-size:17px; margin-left:auto;">${showAdvancedFilter?'expand_less':'expand_more'}</span>
+    </div>
+    ${filterPanel}
+    ${body}
+  `;
+}
+function resetAdvancedFilter(){
+  txFilterAccount="all"; txFilterCategory="all"; txDateFrom=""; txDateTo=""; txAmountMin=""; txAmountMax="";
+  render();
+}
+
+/* ================= ACCOUNTS PAGE ================= */
+function renderAccountsPage(){
+  const total = getTotalBalanceIDR();
+  const rows = DATA.accounts.map(a=>{
+    const bal = getAccountBalance(a.id);
+    const balIDR = bal * (Number(a.exchangeRate)||1);
+    const showConverted = a.currency!=="IDR";
+    return `
+      <div class="acc-card" onclick="openAccountModal('${a.id}')">
+        <div class="acc-avatar" style="background:${a.color}"><span class="material-symbols-rounded">${a.icon}</span></div>
+        <div class="acc-info">
+          <div class="n1">${escapeHtml(a.name)}</div>
+          <div class="n2">${accountTypeLabel(a.type)} &middot; ${a.currency}</div>
+        </div>
+        <div class="acc-bal">
+          <div class="b1" style="color:${bal<0?'var(--red)':'var(--text)'}">${formatMoney(bal, a.currency)}</div>
+          ${showConverted?`<div class="b2">&asymp; ${formatRupiah(balIDR)}</div>`:""}
+        </div>
+      </div>`;
+  }).join("");
+
+  return `
+    <div class="page-subheader" style="display:flex; align-items:center; gap:10px; margin-bottom:4px;">
+      <button class="topbar-icon-btn no-print" style="background:var(--card); color:var(--navy); box-shadow:var(--shadow);" onclick="switchPage('more')"><span class="material-symbols-rounded">arrow_back</span></button>
+      <h2 class="font-display" style="margin:0; font-size:18px;" data-t="accounts">Rekening</h2>
+    </div>
+    <div class="card" style="margin:14px 0; text-align:center; background:var(--navy); color:#fff;">
+      <div style="font-size:11.5px; opacity:.8;" data-t="total_all_accounts">Total Semua Rekening</div>
+      <div style="font-family:'Fraunces',serif; font-size:24px; font-weight:600; margin-top:4px;">${formatRupiah(total)}</div>
+    </div>
+    <div class="grid-cards">${rows}</div>
+    <button class="btn-primary page-action-btn" onclick="openAccountModal()"><span class="material-symbols-rounded" style="vertical-align:middle; font-size:18px;">add</span> <span data-t="add_account">Tambah Rekening Baru</span></button>
+  `;
+}
+function accountTypeLabel(ty){
+  return {cash:t("cash"), bank:t("bank"), ewallet:t("ewallet"), other:t("other")}[ty] || t("account");
+}
+
+/* ================= CATEGORIES PAGE ================= */
+function renderCategoriesPage(){
+  const rowHtml = (c, isSub) => `
+    <div class="list-item ${isSub?'subcat-row':''}" onclick="openCategoryModal('${c.id}')">
+      <div class="li-icon" style="background:${c.color}22; color:${c.color}"><span class="material-symbols-rounded">${c.icon}</span></div>
+      <div class="li-text"><div class="lt1">${escapeHtml(c.name)}</div></div>
+      <span class="material-symbols-rounded chev">chevron_right</span>
+    </div>`;
+  function groupHtml(type){
+    return topLevelCategories(type).map(parent=>{
+      const subs = subCategories(parent.id);
+      return rowHtml(parent,false) + subs.map(s=>rowHtml(s,true)).join("");
+    }).join("") || `<div class="empty-state">-</div>`;
+  }
+  return `
+    <div class="page-subheader" style="display:flex; align-items:center; gap:10px; margin-bottom:4px;">
+      <button class="topbar-icon-btn no-print" style="background:var(--card); color:var(--navy); box-shadow:var(--shadow);" onclick="switchPage('more')"><span class="material-symbols-rounded">arrow_back</span></button>
+      <h2 class="font-display" style="margin:0; font-size:18px;" data-t="categories">Kategori</h2>
+    </div>
+    <div class="section-title" data-t="expense_cat">Pengeluaran</div>
+    <div class="card" style="padding:2px 10px;">${groupHtml("expense")}</div>
+    <div class="section-title" data-t="income_cat">Pemasukan</div>
+    <div class="card" style="padding:2px 10px;">${groupHtml("income")}</div>
+    <button class="btn-primary page-action-btn" onclick="openCategoryModal()"><span class="material-symbols-rounded" style="vertical-align:middle; font-size:18px;">add</span> <span data-t="add_category">Tambah Kategori Baru</span></button>
+  `;
+}
+
+/* ================= BUDGETS PAGE ================= */
+function renderBudgetsPage(){
+  if(DATA.budgets.length===0){
+    return `
+      <div class="empty-state" style="margin-top:20px;">
+        <span class="material-symbols-rounded">pie_chart</span>
+        <p data-t="no_budget">Belum ada anggaran.</p>
+      </div>
+      <button class="btn-primary page-action-btn" onclick="openBudgetModal()"><span class="material-symbols-rounded" style="vertical-align:middle; font-size:18px;">add</span> <span data-t="create_budget">Buat Anggaran Baru</span></button>
+    `;
+  }
+  const rows = DATA.budgets.map(b=>{
+    const cat = getCategory(b.categoryId);
+    const spent = getBudgetSpent(b);
+    const pct = Math.min(100, Math.round((spent/(b.amount||1))*100));
+    const over = spent > b.amount;
+    return `
+      <div class="budget-card" onclick="openBudgetModal('${b.id}')">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <div style="display:flex; align-items:center; gap:9px;">
+            <div class="tx-icon" style="width:34px; height:34px; background:${cat?cat.color+'22':'#eee'}; color:${cat?cat.color:'#333'}"><span class="material-symbols-rounded" style="font-size:17px;">${cat?cat.icon:'category'}</span></div>
+            <div>
+              <div style="font-weight:700; font-size:13.5px;">${cat?escapeHtml(cat.name):'-'}</div>
+              <div style="font-size:11px; color:var(--muted);">${periodLabel(b.period)}</div>
+            </div>
+          </div>
+          <div style="font-size:12px; font-weight:800; color:${over?'var(--red)':'var(--text)'};">${pct}%</div>
+        </div>
+        <div class="pbar-wrap"><div class="pbar-fill" style="width:${pct}%; background:${over?'var(--red)':cat?cat.color:'var(--navy)'}"></div></div>
+        <div style="display:flex; justify-content:space-between; margin-top:6px; font-size:11.5px; color:var(--muted);">
+          <span>${formatRupiah(spent)}</span>
+          <span>${t('total')} ${formatRupiah(b.amount)}</span>
+        </div>
+      </div>`;
+  }).join("");
+  return `<div class="grid-cards">${rows}</div><button class="btn-primary page-action-btn" onclick="openBudgetModal()"><span class="material-symbols-rounded" style="vertical-align:middle; font-size:18px;">add</span> <span data-t="create_budget">Buat Anggaran Baru</span></button>`;
+}
+function periodLabel(p){ return {weekly:t("weekly"), monthly:t("monthly"), yearly:t("yearly")}[p] || t("monthly"); }
+
+/* ================= DEBTS PAGE ================= */
+function renderDebtsPage(){
+  if(DATA.debts.length===0){
+    return `
+      <div class="empty-state" style="margin-top:20px;">
+        <span class="material-symbols-rounded">handshake</span>
+        <p data-t="no_debt">Belum ada catatan hutang/piutang.</p>
+      </div>
+      <button class="btn-primary page-action-btn" onclick="openDebtModal()"><span class="material-symbols-rounded" style="vertical-align:middle; font-size:18px;">add</span> <span data-t="add_debt">Tambah Hutang/Piutang</span></button>
+    `;
+  }
+  const rows = DATA.debts.map(d=>{
+    const paid = getDebtPaid(d);
+    const remaining = Number(d.amount) - paid;
+    const pct = Math.min(100, Math.round((paid/(d.amount||1))*100));
+    const isLunas = remaining<=0;
+    return `
+      <div class="debt-card" onclick="openDebtModal('${d.id}')">
+        <div class="debt-top">
+          <div>
+            <span class="debt-tag ${d.type}">${d.type==='hutang'?t('debt_i_owe'):t('debt_owed_to_me')}</span>
+            <div style="font-weight:700; font-size:14px; margin-top:6px;">${escapeHtml(d.personName)}</div>
+            ${d.dueDate ? `<div style="font-size:11px; color:var(--muted); margin-top:2px;">${t('due_date')}: ${formatDateID(d.dueDate)}</div>` : ""}
+          </div>
+          <div style="text-align:right;">
+            <div style="font-weight:800; font-size:14px;">${formatRupiah(remaining)}</div>
+            <div style="font-size:10.5px; color:var(--muted);">${t('remaining')}</div>
+          </div>
+        </div>
+        <div class="pbar-wrap"><div class="pbar-fill" style="width:${pct}%; background:${isLunas?'var(--green)':(d.type==='hutang'?'var(--red)':'var(--green)')}"></div></div>
+        <div style="display:flex; justify-content:space-between; margin-top:6px; font-size:11.5px; color:var(--muted);">
+          <span>${isLunas?t('paid_off'):t('paid')+' '+formatRupiah(paid)}</span>
+          <span>${t('total')} ${formatRupiah(d.amount)}</span>
+        </div>
+      </div>`;
+  }).join("");
+  return `<div class="grid-cards">${rows}</div><button class="btn-primary page-action-btn" onclick="openDebtModal()"><span class="material-symbols-rounded" style="vertical-align:middle; font-size:18px;">add</span> <span data-t="add_debt">Tambah Hutang/Piutang</span></button>`;
+}
+
+/* ================= REPORTS PAGE (monthly trend) ================= */
+function renderReportsPage(){
+  const keys = getLast6MonthsKeys();
+  const totals = keys.map(k=>getMonthTotals(k));
+  const maxVal = Math.max(1, ...totals.map(x=>Math.max(x.income,x.expense)));
+  const W = 320, H = 170, padBottom = 24, padTop = 10;
+  const groupW = W/keys.length;
+  const barW = groupW*0.28;
+
+  let bars = "";
+  keys.forEach((k,i)=>{
+    const cx = i*groupW + groupW/2;
+    const incH = (totals[i].income/maxVal) * (H-padBottom-padTop);
+    const expH = (totals[i].expense/maxVal) * (H-padBottom-padTop);
+    const baseY = H - padBottom;
+    bars += `<rect x="${cx-barW-2}" y="${baseY-incH}" width="${barW}" height="${incH}" rx="3" fill="var(--green)"/>`;
+    bars += `<rect x="${cx+2}" y="${baseY-expH}" width="${barW}" height="${expH}" rx="3" fill="var(--red)"/>`;
+    bars += `<text x="${cx}" y="${H-6}" font-size="9" fill="var(--muted)" text-anchor="middle">${monthLabel(k)}</text>`;
+  });
+
+  const currMonth = totals[totals.length-1];
+  const prevMonth = totals[totals.length-2];
+  let cmpText = "";
+  if(prevMonth && prevMonth.expense>0){
+    const pct = Math.round(((currMonth.expense-prevMonth.expense)/prevMonth.expense)*100);
+    cmpText = (DATA.settings.lang==="en"
+      ? `Expenses this month are ${pct>=0?'up':'down'} <b>${Math.abs(pct)}%</b> ${t('vs_last_month')}.`
+      : `Pengeluaran bulan ini ${pct>=0?'naik':'turun'} <b>${Math.abs(pct)}%</b> ${t('vs_last_month')}.`);
+  }
+
+  const expByCat = getExpenseByCategory();
+  const catRows = expByCat.map(x=>{
+    const pct = Math.round((x.total/(expByCat[0]?expByCat[0].total:1))*100);
+    return `
+      <div style="margin-bottom:10px;">
+        <div style="display:flex; justify-content:space-between; font-size:12.5px; margin-bottom:4px;">
+          <span style="font-weight:700;">${escapeHtml(x.cat.name)}</span><span style="font-weight:800;">${formatRupiah(x.total)}</span>
+        </div>
+        <div class="pbar-wrap"><div class="pbar-fill" style="width:${pct}%; background:${x.cat.color}"></div></div>
+      </div>`;
+  }).join("") || `<div class="empty-state" style="padding:14px;"><p data-t="no_expense_month">Belum ada pengeluaran bulan ini</p></div>`;
+
+  return `
+    <div class="section-title" style="margin-top:2px;" data-t="monthly_trend">Tren Bulanan</div>
+    <div class="card">
+      <div class="trend-chart-wrap"><svg viewBox="0 0 320 170" style="width:100%; height:auto;">${bars}</svg></div>
+      <div class="trend-legend">
+        <div class="tl"><div class="dot" style="background:var(--green)"></div>${t('income')}</div>
+        <div class="tl"><div class="dot" style="background:var(--red)"></div>${t('expense')}</div>
+      </div>
+      ${cmpText ? `<p style="font-size:12.5px; text-align:center; margin:12px 0 0; color:var(--muted);">${cmpText}</p>` : ""}
+    </div>
+
+    ${renderInsightWidget()}
+
+    <div class="section-title" data-t="expense_by_category">Pengeluaran per Kategori</div>
+    <div class="card">${catRows}</div>
+
+    <button class="btn-primary page-action-btn" onclick="openPdfExportModal()"><span class="material-symbols-rounded" style="vertical-align:middle; font-size:18px;">picture_as_pdf</span> <span data-t="export_pdf">Ekspor Laporan (PDF/Cetak)</span></button>
+  `;
+}
+
+/* ================= RECURRING PAGE ================= */
+function renderRecurringPage(){
+  if(!DATA.recurring || DATA.recurring.length===0){
+    return `
+      <div class="page-subheader" style="display:flex; align-items:center; gap:10px; margin-bottom:4px;">
+        <button class="topbar-icon-btn no-print" style="background:var(--card); color:var(--navy); box-shadow:var(--shadow);" onclick="switchPage('more')"><span class="material-symbols-rounded">arrow_back</span></button>
+        <h2 class="font-display" style="margin:0; font-size:18px;" data-t="recurring_tx">Transaksi Berulang</h2>
+      </div>
+      <div class="empty-state" style="margin-top:20px;"><span class="material-symbols-rounded">update</span><p>-</p></div>
+      <button class="btn-primary page-action-btn" onclick="openRecurringModal()"><span class="material-symbols-rounded" style="vertical-align:middle; font-size:18px;">add</span> ${t('recurring_new')}</button>
+    `;
+  }
+  const rows = DATA.recurring.map(r=>{
+    const acc = getAccount(r.accountId);
+    let label;
+    if(r.type==="transfer"){ const to=getAccount(r.toAccountId); label = t('transfer')+": "+(acc?acc.name:"-")+" → "+(to?to.name:"-"); }
+    else if(r.splits && r.splits.length>1){ label = (DATA.settings.lang==="en"?"Split transaction":"Transaksi split"); }
+    else { const cat = getCategory(r.categoryId); label = cat?cat.name:"-"; }
+    return `
+      <div class="recur-card" onclick="openRecurringModal('${r.id}')">
+        <div class="ri"><span class="material-symbols-rounded">${r.type==='income'?'payments':(r.type==='transfer'?'sync_alt':'event_repeat')}</span></div>
+        <div class="rt">
+          <div class="r1">${escapeHtml(label)} &middot; ${formatMoney(r.amount, acc?acc.currency:'IDR')}</div>
+          <div class="r2">${frequencyLabel(r.frequency)} &middot; ${t('next_occurrence')}: ${formatDateID(r.nextDate)}</div>
+        </div>
+        <span class="recur-badge ${r.active?'':'paused'}">${r.active?t('active'):t('paused')}</span>
+      </div>`;
+  }).join("");
+  return `
+    <div class="page-subheader" style="display:flex; align-items:center; gap:10px; margin-bottom:4px;">
+      <button class="topbar-icon-btn no-print" style="background:var(--card); color:var(--navy); box-shadow:var(--shadow);" onclick="switchPage('more')"><span class="material-symbols-rounded">arrow_back</span></button>
+      <h2 class="font-display" style="margin:0; font-size:18px;" data-t="recurring_tx">Transaksi Berulang</h2>
+    </div>
+    <div class="grid-cards">${rows}</div>
+    <button class="btn-primary page-action-btn" onclick="openRecurringModal()"><span class="material-symbols-rounded" style="vertical-align:middle; font-size:18px;">add</span> ${t('recurring_new')}</button>
+  `;
+}
+function frequencyLabel(f){ return {daily:t("daily"), weekly:t("weekly"), monthly:t("monthly"), yearly:t("yearly")}[f] || t("monthly"); }
+
+/* ================= MORE PAGE ================= */
+function renderMorePage(){
+  return `
+    <div class="section-title" style="margin-top:2px;" data-t="manage_data">Kelola Data</div>
+    <div class="card" style="padding:2px 10px;">
+      <div class="list-item" onclick="switchPage('accounts')">
+        <div class="li-icon"><span class="material-symbols-rounded">account_balance</span></div>
+        <div class="li-text"><div class="lt1" data-t="accounts">Rekening</div><div class="lt2">${DATA.accounts.length} ${t('saved_accounts')}</div></div>
+        <span class="material-symbols-rounded chev">chevron_right</span>
+      </div>
+      <div class="list-item" onclick="switchPage('categories')">
+        <div class="li-icon"><span class="material-symbols-rounded">category</span></div>
+        <div class="li-text"><div class="lt1" data-t="categories">Kategori</div><div class="lt2">${DATA.categories.length} ${t('saved_categories')}</div></div>
+        <span class="material-symbols-rounded chev">chevron_right</span>
+      </div>
+      <div class="list-item" onclick="switchPage('budgets')">
+        <div class="li-icon"><span class="material-symbols-rounded">pie_chart</span></div>
+        <div class="li-text"><div class="lt1" data-t="nav_budgets">Anggaran</div><div class="lt2">${DATA.budgets.length} ${t('active_budgets')}</div></div>
+        <span class="material-symbols-rounded chev">chevron_right</span>
+      </div>
+      <div class="list-item" onclick="switchPage('debts')">
+        <div class="li-icon"><span class="material-symbols-rounded">handshake</span></div>
+        <div class="li-text"><div class="lt1" data-t="nav_debts">Hutang &amp; Piutang</div><div class="lt2">${DATA.debts.length} ${t('records')}</div></div>
+        <span class="material-symbols-rounded chev">chevron_right</span>
+      </div>
+      <div class="list-item" onclick="switchPage('recurring')">
+        <div class="li-icon"><span class="material-symbols-rounded">event_repeat</span></div>
+        <div class="li-text"><div class="lt1" data-t="recurring_tx">Transaksi Berulang</div><div class="lt2">${(DATA.recurring||[]).length} ${t('scheduled_notes')}</div></div>
+        <span class="material-symbols-rounded chev">chevron_right</span>
+      </div>
+      <div class="list-item" onclick="switchPage('reports')">
+        <div class="li-icon"><span class="material-symbols-rounded">bar_chart</span></div>
+        <div class="li-text"><div class="lt1" data-t="nav_reports">Laporan</div><div class="lt2" data-t="monthly_trend">Tren Bulanan</div></div>
+        <span class="material-symbols-rounded chev">chevron_right</span>
+      </div>
+    </div>
+
+    <div class="section-title" data-t="settings">Pengaturan</div>
+    <div class="card" style="padding:2px 10px;">
+      <div class="list-item" style="cursor:default;">
+        <div class="li-icon"><span class="material-symbols-rounded">translate</span></div>
+        <div class="li-text"><div class="lt1" data-t="language">Bahasa</div></div>
+        <select class="li-toggle" style="border-radius:10px; border:1.5px solid var(--border); padding:6px 8px; background:var(--bg); color:var(--text);" onchange="changeLanguage(this.value)">
+          <option value="id" ${DATA.settings.lang==='id'?'selected':''}>Bahasa Indonesia</option>
+          <option value="en" ${DATA.settings.lang==='en'?'selected':''}>English</option>
+        </select>
+      </div>
+      <div class="list-item" style="cursor:default;">
+        <div class="li-icon"><span class="material-symbols-rounded">contrast</span></div>
+        <div class="li-text"><div class="lt1" data-t="theme">Tema Tampilan</div></div>
+        <label class="switch li-toggle">
+          <input type="checkbox" ${DATA.settings.theme==='dark'?'checked':''} onchange="toggleTheme()">
+          <span class="slider"></span>
+        </label>
+      </div>
+      <div class="list-item" onclick="openTutorial()">
+        <div class="li-icon"><span class="material-symbols-rounded">school</span></div>
+        <div class="li-text"><div class="lt1" data-t="tutorial">Cara Pakai / Panduan</div><div class="lt2" data-t="tutorial_hint">Pelajari fitur-fitur aplikasi</div></div>
+        <span class="material-symbols-rounded chev">chevron_right</span>
+      </div>
+    </div>
+
+    <div class="section-title" data-t="backup_sync">Backup &amp; Sinkronisasi</div>
+    <div class="card" style="padding:2px 10px;">
+      <div class="list-item" onclick="exportBackup()">
+        <div class="li-icon"><span class="material-symbols-rounded">file_download</span></div>
+        <div class="li-text"><div class="lt1" data-t="export_data">Ekspor Data (Backup)</div><div class="lt2" data-t="export_hint">Simpan file .json ke perangkat / cloud pilihan Anda</div></div>
+        <span class="material-symbols-rounded chev">chevron_right</span>
+      </div>
+      <div class="list-item" onclick="triggerImportBackup()">
+        <div class="li-icon"><span class="material-symbols-rounded">file_upload</span></div>
+        <div class="li-text"><div class="lt1" data-t="import_data">Impor Data</div><div class="lt2" data-t="import_hint">Pulihkan dari file backup .json</div></div>
+        <span class="material-symbols-rounded chev">chevron_right</span>
+      </div>
+      <div class="list-item" onclick="openPdfExportModal()">
+        <div class="li-icon"><span class="material-symbols-rounded">picture_as_pdf</span></div>
+        <div class="li-text"><div class="lt1" data-t="export_pdf">Ekspor Laporan (PDF/Cetak)</div><div class="lt2" data-t="export_pdf_hint">Ringkasan bulanan siap cetak atau simpan PDF</div></div>
+        <span class="material-symbols-rounded chev">chevron_right</span>
+      </div>
+      <div class="list-item" onclick="openResetModal()">
+        <div class="li-icon" style="background:var(--red-soft); color:var(--red);"><span class="material-symbols-rounded">delete_sweep</span></div>
+        <div class="li-text"><div class="lt1" data-t="delete_all">Hapus Semua Data</div><div class="lt2" data-t="delete_all_hint">Mulai ulang dari awal</div></div>
+        <span class="material-symbols-rounded chev">chevron_right</span>
+      </div>
+    </div>
+    <input type="file" id="importFileInput" accept="application/json" style="display:none" onchange="handleImportFile(event)">
+
+    <div class="section-title" data-t="about_app">Tentang SBD Smart Finance</div>
+    <div class="card">
+      <div class="checklist-grid">
+        <div class="ck"><span class="material-symbols-rounded">check_circle</span> Tanpa Login</div>
+        <div class="ck"><span class="material-symbols-rounded">check_circle</span> Tanpa Password</div>
+        <div class="ck"><span class="material-symbols-rounded">check_circle</span> Tanpa Registrasi</div>
+        <div class="ck"><span class="material-symbols-rounded">check_circle</span> Tanpa Iklan</div>
+        <div class="ck"><span class="material-symbols-rounded">check_circle</span> Tanpa Subscription</div>
+        <div class="ck"><span class="material-symbols-rounded">check_circle</span> Tanpa Trial</div>
+        <div class="ck"><span class="material-symbols-rounded">check_circle</span> Tanpa Batas Rekening</div>
+        <div class="ck"><span class="material-symbols-rounded">check_circle</span> Tanpa Batas Kategori</div>
+        <div class="ck"><span class="material-symbols-rounded">check_circle</span> Tanpa Batas Transaksi</div>
+        <div class="ck"><span class="material-symbols-rounded">check_circle</span> Tanpa Batas Lampiran</div>
+        <div class="ck"><span class="material-symbols-rounded">check_circle</span> Tanpa Batas Anggaran</div>
+        <div class="ck"><span class="material-symbols-rounded">check_circle</span> Tanpa Batas Hutang/Piutang</div>
+        <div class="ck"><span class="material-symbols-rounded">check_circle</span> Tanpa Batas Backup</div>
+        <div class="ck"><span class="material-symbols-rounded">check_circle</span> Tanpa Batas Impor/Ekspor</div>
+      </div>
+      <p style="font-size:12px; color:var(--muted); margin-top:12px; line-height:1.6;">
+        Seluruh data Anda tersimpan secara lokal (offline-first, IndexedDB) di perangkat ini. Gunakan fitur
+        <b data-t="export_data">Ekspor Data</b> secara berkala untuk membuat cadangan, lalu simpan file tersebut ke Google Drive,
+        Dropbox, email, atau penyimpanan cloud pilihan Anda sendiri sebagai sinkronisasi manual.
+      </p>
+    </div>
+
+    <div class="footer-brand">
+      <b>SBD Smart Finance</b> &mdash; produk digital dari SB-Digital<br>
+      WhatsApp: ${WA_NUMBER} &nbsp;|&nbsp; <a href="${SBD_WEBSITE}" target="_blank" rel="noopener">solusibarokahdigital.biz.id</a>
+    </div>
+  `;
+}
+
+/* ================= MODAL ENGINE ================= */
+function openModal(innerHtml){
+  const root = document.getElementById("modalRoot");
+  root.innerHTML = `
+    <div class="modal-overlay" id="activeModalOverlay" onclick="if(event.target===this) closeModal()">
+      <div class="modal-sheet">
+        <div class="modal-handle"></div>
+        ${innerHtml}
+      </div>
+    </div>`;
+  requestAnimationFrame(()=>{
+    const ov = document.getElementById("activeModalOverlay");
+    if(ov) ov.classList.add("open");
+  });
+  applyStaticTranslations();
+  historyModalPushed = safeHistoryPush({sbdModal:true}, location.hash || "#modal");
+}
+function closeModal(fromPop){
+  const ov = document.getElementById("activeModalOverlay");
+  if(!ov) return;
+  ov.classList.remove("open");
+  setTimeout(()=>{ const r=document.getElementById("modalRoot"); if(r) r.innerHTML = ""; }, 200);
+  if(!fromPop && historyModalPushed){
+    safeHistoryBack();
+  }
+  historyModalPushed = false;
+}
+
+/* ================= TRANSACTION MODAL ================= */
+let editingTxId = null;
+let currentTxType = "expense";
+let currentTxAttachments = [];
+let splitMode = false;
+let splitRows = [];
+
+function openTransactionModal(presetType, txId){
+  editingTxId = txId || null;
+  let tx = null;
+  if(txId) tx = DATA.transactions.find(t=>t.id===txId);
+  currentTxType = tx ? tx.type : (presetType || "expense");
+  currentTxAttachments = tx && tx.attachments ? [...tx.attachments] : [];
+  splitMode = !!(tx && tx.splits && tx.splits.length);
+  splitRows = splitMode ? tx.splits.map(s=>({categoryId:s.categoryId, amount:s.amount})) : [];
+  renderTransactionModal(tx);
+}
+function currentAccountCurrency(){
+  const accSel = document.getElementById("txAccount");
+  const accId = accSel ? accSel.value : (DATA.accounts[0] && DATA.accounts[0].id);
+  const acc = getAccount(accId) || DATA.accounts[0];
+  return acc ? acc.currency : "IDR";
+}
+function renderTransactionModal(tx){
+  const accOptions = DATA.accounts.map(a=>`<option value="${a.id}" ${tx&&tx.accountId===a.id?'selected':''}>${escapeHtml(a.name)} (${a.currency})</option>`).join("");
+  const toAccOptions = DATA.accounts.map(a=>`<option value="${a.id}" ${tx&&tx.toAccountId===a.id?'selected':''}>${escapeHtml(a.name)} (${a.currency})</option>`).join("");
+  const currCode = tx ? (getAccount(tx.accountId)?getAccount(tx.accountId).currency:"IDR") : (DATA.accounts[0]?DATA.accounts[0].currency:"IDR");
+  const currSymbol = (CURRENCIES[currCode]||CURRENCIES.IDR).symbol;
+  const catOptionsHtml = categoryOptionsHtml(currentTxType==="transfer"?"expense":currentTxType, tx?tx.categoryId:null);
+
+  const canSplit = currentTxType==="expense" || currentTxType==="income";
+  let splitHtml = "";
+  if(canSplit){
+    splitHtml = `
+      <div class="field" style="background:var(--bg); border-radius:12px; padding:10px 12px;">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <label style="margin:0;" data-t="split_category">Split Kategori</label>
+          <label class="switch"><input type="checkbox" ${splitMode?'checked':''} onchange="toggleSplitMode(this.checked)"><span class="slider"></span></label>
+        </div>
+        <div class="hint" data-t="split_hint">Bagi transaksi ini ke beberapa kategori sekaligus</div>
+      </div>`;
+  }
+
+  let mainCategoryField = "";
+  let splitFields = "";
+  if(canSplit && splitMode){
+    if(splitRows.length===0) splitRows.push({categoryId:"", amount:0}, {categoryId:"", amount:0});
+    const rowsHtml = splitRows.map((r,i)=>`
+      <div class="split-row">
+        <select onchange="splitRows[${i}].categoryId=this.value">
+          <option value="">-</option>
+          ${categoryOptionsHtml(currentTxType, r.categoryId)}
+        </select>
+        <div class="amt-field">
+          <input type="text" inputmode="numeric" placeholder="0" value="${r.amount?Number(r.amount).toLocaleString('id-ID'):''}"
+            oninput="this.value=formatLiveAmount(this.value); splitRows[${i}].amount=parseAmountInput(this.value); updateSplitTotal();">
+        </div>
+        <div class="split-remove" onclick="removeSplitRow(${i})"><span class="material-symbols-rounded" style="font-size:16px;">close</span></div>
+      </div>`).join("");
+    const splitSum = splitRows.reduce((s,r)=>s+(Number(r.amount)||0),0);
+    splitFields = `
+      <div class="field">
+        <div id="splitRowsContainer">${rowsHtml}</div>
+        <button type="button" class="btn-small" onclick="addSplitRow()" data-t="add_row">+ Tambah Baris</button>
+        <div class="split-total-row" id="splitTotalRow">
+          <span data-t="split_total">Total Split</span><span id="splitTotalVal">${currSymbol} ${splitSum.toLocaleString('id-ID')}</span>
+        </div>
+      </div>`;
+  } else if(canSplit){
+    mainCategoryField = `
+      <div class="field">
+        <label data-t="category">Kategori</label>
+        <select id="txCategory">${catOptionsHtml}</select>
+      </div>`;
+  }
+
+  const html = `
+    <div class="modal-head"><h3>${editingTxId?t('save_changes'):t('new_transaction')}</h3>
+      <button class="modal-close" onclick="closeModal()"><span class="material-symbols-rounded">close</span></button>
+    </div>
+    <div class="modal-body">
+      <div class="type-toggle">
+        <button class="${currentTxType==='expense'?'on-expense':''}" onclick="setTxType('expense')"><span class="material-symbols-rounded" style="font-size:16px;">remove_circle</span><span data-t="expense">Pengeluaran</span></button>
+        <button class="${currentTxType==='income'?'on-income':''}" onclick="setTxType('income')"><span class="material-symbols-rounded" style="font-size:16px;">add_circle</span><span data-t="income">Pemasukan</span></button>
+        <button class="${currentTxType==='transfer'?'on-transfer':''}" onclick="setTxType('transfer')"><span class="material-symbols-rounded" style="font-size:16px;">sync_alt</span><span data-t="transfer">Transfer</span></button>
+      </div>
+
+      <div class="field">
+        <label><span data-t="amount">Jumlah</span> <span class="unit-badge">(${currSymbol})</span></label>
+        <div class="amount-input">
+          <input type="text" inputmode="numeric" id="txAmount" placeholder="0" value="${tx&&!splitMode?Number(tx.amount).toLocaleString('id-ID'):''}" oninput="this.value=formatLiveAmount(this.value)" ${splitMode?'readonly':''}>
+        </div>
+        ${splitMode?`<div class="hint" data-t="must_match">Jumlah dihitung otomatis dari total split</div>`:""}
+      </div>
+
+      <div class="field">
+        <label data-t="${currentTxType==='transfer'?'from_account':'account'}">${currentTxType==='transfer'?'Dari Rekening':'Rekening'}</label>
+        <select id="txAccount" onchange="onTxAccountChange()">${accOptions}</select>
+      </div>
+
+      ${currentTxType==='transfer' ? `
+      <div class="field">
+        <label data-t="to_account">Ke Rekening</label>
+        <select id="txToAccount">${toAccOptions}</select>
+      </div>` : `${splitHtml}${mainCategoryField}${splitFields}`}
+
+      <div class="field">
+        <label data-t="date">Tanggal</label>
+        <input type="date" id="txDate" value="${tx?tx.date:todayStr()}" max="${todayStr()}">
+        <div class="hint">${DATA.settings.lang==='en'?'For future-dated entries, use Recurring Transactions.':'Untuk tanggal masa depan, gunakan menu Transaksi Berulang.'}</div>
+      </div>
+
+      <div class="field">
+        <label data-t="notes">Catatan (Opsional)</label>
+        <textarea id="txNotes" maxlength="500">${tx?escapeHtml(tx.notes||''):''}</textarea>
+      </div>
+
+      <div class="field">
+        <label data-t="attachments">Lampiran Foto</label>
+        <div class="attach-row" id="attachRow">${renderAttachRow()}</div>
+        <input type="file" id="attachFileInput" accept="image/*" multiple style="display:none" onchange="handleAttachFiles(event)">
+      </div>
+
+      ${editingTxId ? `
+      <div class="btn-row">
+        <button class="btn-danger" style="flex:1;" onclick="deleteTransaction('${editingTxId}')" data-t="delete">Hapus</button>
+        <button class="btn-primary" style="flex:2;" onclick="saveTransaction()" data-t="save_changes">Simpan Perubahan</button>
+      </div>` : `<button class="btn-primary" onclick="saveTransaction()" data-t="save">Simpan Transaksi</button>`}
+    </div>
+  `;
+  openModal(html);
+  if(splitMode) updateSplitTotal();
+}
+function onTxAccountChange(){
+  const tx = editingTxId ? DATA.transactions.find(t=>t.id===editingTxId) : null;
+  renderTransactionModal(tx);
+}
+function toggleSplitMode(checked){
+  splitMode = checked;
+  const tx = editingTxId ? DATA.transactions.find(t=>t.id===editingTxId) : null;
+  renderTransactionModal(tx);
+}
+function addSplitRow(){ splitRows.push({categoryId:"", amount:0}); const tx = editingTxId ? DATA.transactions.find(t=>t.id===editingTxId) : null; renderTransactionModal(tx); }
+function removeSplitRow(i){ splitRows.splice(i,1); const tx = editingTxId ? DATA.transactions.find(t=>t.id===editingTxId) : null; renderTransactionModal(tx); }
+function updateSplitTotal(){
+  const sum = splitRows.reduce((s,r)=>s+(Number(r.amount)||0),0);
+  const el = document.getElementById("splitTotalVal");
+  const currCode = currentAccountCurrency();
+  const sym = (CURRENCIES[currCode]||CURRENCIES.IDR).symbol;
+  if(el) el.textContent = sym + " " + sum.toLocaleString("id-ID");
+  const amountInput = document.getElementById("txAmount");
+  if(amountInput) amountInput.value = sum.toLocaleString("id-ID");
+}
+function formatLiveAmount(v){
+  const digits = v.replace(/[^0-9]/g,"");
+  return digits ? Number(digits).toLocaleString("id-ID") : "";
+}
+function setTxType(type){
+  currentTxType = type;
+  if(type==="transfer") splitMode = false;
+  const tx = editingTxId ? DATA.transactions.find(t=>t.id===editingTxId) : null;
+  renderTransactionModal(tx);
+}
+function renderAttachRow(){
+  let html = currentTxAttachments.map((src)=>`<img class="attach-thumb" src="${src}" onclick="viewAttachment(this.src)">`).join("");
+  html += `<div class="attach-add" onclick="document.getElementById('attachFileInput').click()"><span class="material-symbols-rounded">add_a_photo</span></div>`;
+  return html;
+}
+async function handleAttachFiles(evt){
+  const files = Array.from(evt.target.files||[]);
+  if(files.length===0) return;
+  showToast(DATA.settings.lang==="en"?"Processing photos...":"Memproses foto...");
+  for(const file of files){
+    const compressed = await compressImage(file, 1000, 0.72);
+    if(compressed) currentTxAttachments.push(compressed);
+  }
+  const row = document.getElementById("attachRow");
+  if(row) row.innerHTML = renderAttachRow();
+  evt.target.value = "";
+}
+function viewAttachment(src){
+  openModal(`
+    <div class="modal-head"><h3 data-t="attachments">Lampiran</h3><button class="modal-close" onclick="closeModal()"><span class="material-symbols-rounded">close</span></button></div>
+    <div class="modal-body"><img src="${src}" style="width:100%; border-radius:14px;"></div>
+  `);
+}
+function saveTransaction(){
+  const accountId = document.getElementById("txAccount").value;
+  const date = document.getElementById("txDate").value || todayStr();
+  const notes = document.getElementById("txNotes").value.trim().slice(0,500);
+  let payload = { type: currentTxType, accountId, date, notes, attachments: [...currentTxAttachments] };
+
+  if(currentTxType==="transfer"){
+    const amount = parseAmountInput(document.getElementById("txAmount").value);
+    if(!amount || amount<=0){ showToast(DATA.settings.lang==="en"?"Enter a valid amount":"Masukkan jumlah yang valid"); return; }
+    const toAccountId = document.getElementById("txToAccount").value;
+    if(toAccountId===accountId){ showToast(DATA.settings.lang==="en"?"Destination account must differ":"Rekening tujuan harus berbeda"); return; }
+    payload.amount = amount;
+    payload.toAccountId = toAccountId;
+  } else if(splitMode){
+    const validRows = splitRows.filter(r=>r.categoryId && Number(r.amount)>0);
+    if(validRows.length<2){ showToast(DATA.settings.lang==="en"?"Add at least 2 split rows":"Tambahkan minimal 2 baris split"); return; }
+    const sum = validRows.reduce((s,r)=>s+Number(r.amount),0);
+    payload.amount = sum;
+    payload.splits = validRows.map(r=>({categoryId:r.categoryId, amount:Number(r.amount)}));
+  } else {
+    const amount = parseAmountInput(document.getElementById("txAmount").value);
+    if(!amount || amount<=0){ showToast(DATA.settings.lang==="en"?"Enter a valid amount":"Masukkan jumlah yang valid"); return; }
+    const categoryId = document.getElementById("txCategory").value;
+    if(!categoryId){ showToast(DATA.settings.lang==="en"?"Select a category":"Pilih kategori"); return; }
+    payload.amount = amount;
+    payload.categoryId = categoryId;
+  }
+
+  if(editingTxId){
+    const idx = DATA.transactions.findIndex(t=>t.id===editingTxId);
+    DATA.transactions[idx] = {...DATA.transactions[idx], ...payload, splits: payload.splits||null, categoryId: payload.categoryId||null, toAccountId: payload.toAccountId||null};
+    showToast(DATA.settings.lang==="en"?"Transaction updated":"Transaksi diperbarui");
+  } else {
+    payload.id = uid("tx");
+    DATA.transactions.push(payload);
+    showToast(DATA.settings.lang==="en"?"Transaction added":"Transaksi ditambahkan");
+  }
+  saveData();
+  closeModal();
+  render();
+}
+function deleteTransaction(id){
+  const idx = DATA.transactions.findIndex(t=>t.id===id);
+  if(idx<0) return;
+  const removed = DATA.transactions[idx];
+  DATA.transactions.splice(idx,1);
+  saveData();
+  closeModal();
+  render();
+  showToast(DATA.settings.lang==="en"?"Transaction deleted":"Transaksi dihapus", ()=>{
+    DATA.transactions.splice(idx,0,removed);
+    saveData(); render();
+  });
+}
+
+/* ================= ACCOUNT MODAL ================= */
+const ACCOUNT_ICONS = ["account_balance","account_balance_wallet","payments","savings","credit_card","wallet","currency_exchange","real_estate_agent"];
+const ACCOUNT_COLORS = ["#0F2557","#178A4C","#C9A227","#D9362E","#2563EB","#9333EA","#0D9488","#EA580C"];
+let editingAccountId = null;
+let pickedAccountIcon = "account_balance";
+let pickedAccountColor = "#0F2557";
+
+function openAccountModal(accId){
+  editingAccountId = accId || null;
+  const acc = accId ? getAccount(accId) : null;
+  pickedAccountIcon = acc ? acc.icon : "account_balance";
+  pickedAccountColor = acc ? acc.color : "#0F2557";
+  renderAccountModal(acc);
+}
+function renderAccountModal(acc){
+  const iconGrid = ACCOUNT_ICONS.map(ic=>`<div class="icon-pick ${ic===pickedAccountIcon?'selected':''}" onclick="pickAccountIcon('${ic}')"><span class="material-symbols-rounded">${ic}</span></div>`).join("");
+  const colorGrid = ACCOUNT_COLORS.map(c=>`<div class="color-pick ${c===pickedAccountColor?'selected':''}" style="background:${c}" onclick="pickAccountColor('${c}')"></div>`).join("");
+  const currOptions = Object.keys(CURRENCIES).map(code=>`<option value="${code}" ${acc&&acc.currency===code?'selected':''}>${code} - ${CURRENCIES[code].name}</option>`).join("");
+  const currSym = (CURRENCIES[acc?acc.currency:'IDR']||CURRENCIES.IDR).symbol;
+  const html = `
+    <div class="modal-head"><h3>${acc?t('save_changes'):t('add_account')}</h3><button class="modal-close" onclick="closeModal()"><span class="material-symbols-rounded">close</span></button></div>
+    <div class="modal-body">
+      <div class="field"><label data-t="account_name">Nama Rekening</label><input type="text" id="accName" placeholder="Contoh: BCA, Dompet, GoPay" value="${acc?escapeHtml(acc.name):''}"></div>
+      <div class="field"><label data-t="account_type">Jenis Rekening</label>
+        <select id="accType">
+          <option value="cash" ${acc&&acc.type==='cash'?'selected':''}>${t('cash')}</option>
+          <option value="bank" ${acc&&acc.type==='bank'?'selected':''}>${t('bank')}</option>
+          <option value="ewallet" ${acc&&acc.type==='ewallet'?'selected':''}>${t('ewallet')}</option>
+          <option value="other" ${acc&&acc.type==='other'?'selected':''}>${t('other')}</option>
+        </select>
+      </div>
+      <div class="field-row">
+        <div class="field"><label data-t="currency">Mata Uang</label><select id="accCurrency" onchange="onAccCurrencyChange()">${currOptions}</select></div>
+        <div class="field"><label data-t="exchange_rate">Kurs ke Rupiah</label><input type="text" inputmode="numeric" id="accRate" value="${acc?Number(acc.exchangeRate||1).toLocaleString('id-ID'):'1'}" oninput="this.value=formatLiveAmount(this.value)"></div>
+      </div>
+      <div class="field">
+        <label><span data-t="initial_balance">Saldo Awal</span> <span class="unit-badge" id="accBalUnit">(${currSym})</span></label>
+        <div class="amount-input"><input type="text" inputmode="numeric" id="accInitBalance" value="${acc?Number(acc.initialBalance).toLocaleString('id-ID'):''}" oninput="this.value=formatLiveAmount(this.value)"></div>
+      </div>
+      <div class="field"><label data-t="icon">Ikon</label><div class="icon-grid">${iconGrid}</div></div>
+      <div class="field"><label data-t="color">Warna</label><div class="color-grid">${colorGrid}</div></div>
+      <div class="field"><label data-t="notes">Catatan (Opsional)</label><textarea id="accNotes">${acc?escapeHtml(acc.notes||''):''}</textarea></div>
+      ${acc ? `
+      <div class="btn-row">
+        <button class="btn-danger" style="flex:1;" onclick="deleteAccount('${acc.id}')" data-t="delete">Hapus</button>
+        <button class="btn-primary" style="flex:2;" onclick="saveAccount()" data-t="save_changes">Simpan Perubahan</button>
+      </div>` : `<button class="btn-primary" onclick="saveAccount()" data-t="save">Simpan Rekening</button>`}
+    </div>`;
+  openModal(html);
+}
+function onAccCurrencyChange(){
+  const code = document.getElementById("accCurrency").value;
+  const sym = (CURRENCIES[code]||CURRENCIES.IDR).symbol;
+  const unitEl = document.getElementById("accBalUnit");
+  if(unitEl) unitEl.textContent = "("+sym+")";
+  const rateInput = document.getElementById("accRate");
+  if(rateInput && code==="IDR") rateInput.value = "1";
+}
+function pickAccountIcon(ic){ pickedAccountIcon = ic; renderAccountModal(editingAccountId?getAccount(editingAccountId):null); }
+function pickAccountColor(c){ pickedAccountColor = c; renderAccountModal(editingAccountId?getAccount(editingAccountId):null); }
+function saveAccount(){
+  const name = document.getElementById("accName").value.trim().slice(0,100);
+  if(!name){ showToast(DATA.settings.lang==="en"?"Account name is required":"Nama rekening wajib diisi"); return; }
+  const type = document.getElementById("accType").value;
+  const currency = document.getElementById("accCurrency").value;
+  const exchangeRate = parseAmountInput(document.getElementById("accRate").value) || 1;
+  const initialBalance = parseAmountInput(document.getElementById("accInitBalance").value);
+  const notes = document.getElementById("accNotes").value.trim().slice(0,500);
+  const payload = {name, type, initialBalance, icon:pickedAccountIcon, color:pickedAccountColor, notes, currency, exchangeRate};
+  if(editingAccountId){
+    const idx = DATA.accounts.findIndex(a=>a.id===editingAccountId);
+    DATA.accounts[idx] = {...DATA.accounts[idx], ...payload};
+    showToast(DATA.settings.lang==="en"?"Account updated":"Rekening diperbarui");
+  } else {
+    payload.id = uid("acc");
+    DATA.accounts.push(payload);
+    showToast(DATA.settings.lang==="en"?"Account added":"Rekening ditambahkan");
+  }
+  saveData(); closeModal(); switchPage("accounts");
+}
+function deleteAccount(id){
+  const used = DATA.transactions.some(t=>t.accountId===id||t.toAccountId===id);
+  if(used){ showToast(DATA.settings.lang==="en"?"Cannot delete: account still has transactions":"Tidak bisa dihapus: masih ada transaksi di rekening ini"); return; }
+  if(DATA.accounts.length<=1){ showToast(DATA.settings.lang==="en"?"At least one account is required":"Minimal harus ada satu rekening"); return; }
+  DATA.accounts = DATA.accounts.filter(a=>a.id!==id);
+  saveData(); closeModal(); showToast(DATA.settings.lang==="en"?"Account deleted":"Rekening dihapus"); switchPage("accounts");
+}
+
+/* ================= CATEGORY MODAL ================= */
+const CATEGORY_ICONS = ["restaurant","directions_car","shopping_bag","bolt","celebration","health_and_safety","school","home",
+  "volunteer_activism","more_horiz","payments","redeem","storefront","trending_up","pets","fitness_center","flight","checkroom",
+  "local_gas_station","spa","child_care","build","phone_iphone","laptop_mac"];
+const CATEGORY_COLORS = ["#D9362E","#2563EB","#9333EA","#EA580C","#DB2777","#0D9488","#4F46E5","#B45309","#C9A227","#178A4C","#0EA5E9","#059669","#6B7280"];
+let editingCategoryId = null;
+let pickedCatIcon = "category";
+let pickedCatColor = "#0F2557";
+let pickedCatType = "expense";
+let pickedCatParent = null;
+
+function openCategoryModal(catId, forceParent){
+  editingCategoryId = catId || null;
+  const cat = catId ? getCategory(catId) : null;
+  pickedCatIcon = cat ? cat.icon : "category";
+  pickedCatColor = cat ? cat.color : "#0F2557";
+  pickedCatType = cat ? cat.type : "expense";
+  pickedCatParent = cat ? (cat.parentId||null) : (forceParent||null);
+  renderCategoryModal(cat);
+}
+function renderCategoryModal(cat){
+  const iconGrid = CATEGORY_ICONS.map(ic=>`<div class="icon-pick ${ic===pickedCatIcon?'selected':''}" onclick="pickCatIcon('${ic}')"><span class="material-symbols-rounded">${ic}</span></div>`).join("");
+  const colorGrid = CATEGORY_COLORS.map(c=>`<div class="color-pick ${c===pickedCatColor?'selected':''}" style="background:${c}" onclick="pickCatColor('${c}')"></div>`).join("");
+  const parentOptions = `<option value="">${t('none_top_level')}</option>` + topLevelCategories(pickedCatType).filter(p=>!cat||p.id!==cat.id).map(p=>`<option value="${p.id}" ${pickedCatParent===p.id?'selected':''}>${escapeHtml(p.name)}</option>`).join("");
+  const html = `
+    <div class="modal-head"><h3>${cat?t('save_changes'):t('add_category')}</h3><button class="modal-close" onclick="closeModal()"><span class="material-symbols-rounded">close</span></button></div>
+    <div class="modal-body">
+      <div class="type-toggle">
+        <button class="${pickedCatType==='expense'?'on-expense':''}" onclick="setCatType('expense')" data-t="expense_cat">Pengeluaran</button>
+        <button class="${pickedCatType==='income'?'on-income':''}" onclick="setCatType('income')" data-t="income_cat">Pemasukan</button>
+      </div>
+      <div class="field"><label data-t="category_name">Nama Kategori</label><input type="text" id="catName" placeholder="Contoh: Ojek Online" value="${cat?escapeHtml(cat.name):''}"></div>
+      <div class="field"><label data-t="parent_category">Kategori Induk (Opsional)</label><select id="catParent">${parentOptions}</select></div>
+      <div class="field"><label data-t="icon">Ikon</label><div class="icon-grid">${iconGrid}</div></div>
+      <div class="field"><label data-t="color">Warna</label><div class="color-grid">${colorGrid}</div></div>
+      ${cat ? `
+      <div class="btn-row">
+        <button class="btn-danger" style="flex:1;" onclick="deleteCategory('${cat.id}')" data-t="delete">Hapus</button>
+        <button class="btn-primary" style="flex:2;" onclick="saveCategory()" data-t="save_changes">Simpan Perubahan</button>
+      </div>` : `<button class="btn-primary" onclick="saveCategory()" data-t="save">Simpan Kategori</button>`}
+    </div>`;
+  openModal(html);
+}
+function setCatType(ty){ pickedCatType = ty; pickedCatParent=null; renderCategoryModal(editingCategoryId?getCategory(editingCategoryId):null); }
+function pickCatIcon(ic){ pickedCatIcon = ic; renderCategoryModal(editingCategoryId?getCategory(editingCategoryId):null); }
+function pickCatColor(c){ pickedCatColor = c; renderCategoryModal(editingCategoryId?getCategory(editingCategoryId):null); }
+function saveCategory(){
+  const name = document.getElementById("catName").value.trim().slice(0,80);
+  if(!name){ showToast(DATA.settings.lang==="en"?"Category name is required":"Nama kategori wajib diisi"); return; }
+  const parentId = document.getElementById("catParent").value || null;
+  const payload = {name, type:pickedCatType, icon:pickedCatIcon, color:pickedCatColor, parentId};
+  if(editingCategoryId){
+    if(parentId===editingCategoryId){ showToast(DATA.settings.lang==="en"?"A category cannot be its own parent":"Kategori tidak bisa menjadi induknya sendiri"); return; }
+    const idx = DATA.categories.findIndex(c=>c.id===editingCategoryId);
+    DATA.categories[idx] = {...DATA.categories[idx], ...payload};
+    showToast(DATA.settings.lang==="en"?"Category updated":"Kategori diperbarui");
+  } else {
+    payload.id = uid("cat");
+    DATA.categories.push(payload);
+    showToast(DATA.settings.lang==="en"?"Category added":"Kategori ditambahkan");
+  }
+  saveData(); closeModal(); switchPage("categories");
+}
+function deleteCategory(id){
+  const usedTx = DATA.transactions.some(t=> t.categoryId===id || (t.splits&&t.splits.some(s=>s.categoryId===id)));
+  const usedBudget = DATA.budgets.some(b=>b.categoryId===id);
+  const hasSubs = DATA.categories.some(c=>c.parentId===id);
+  if(usedTx||usedBudget){ showToast(DATA.settings.lang==="en"?"Cannot delete: category is in use":"Tidak bisa dihapus: kategori masih digunakan"); return; }
+  if(hasSubs){ showToast(DATA.settings.lang==="en"?"Cannot delete: has subcategories":"Tidak bisa dihapus: masih memiliki sub-kategori"); return; }
+  DATA.categories = DATA.categories.filter(c=>c.id!==id);
+  saveData(); closeModal(); showToast(DATA.settings.lang==="en"?"Category deleted":"Kategori dihapus"); switchPage("categories");
+}
+
+/* ================= BUDGET MODAL ================= */
+let editingBudgetId = null;
+function openBudgetModal(budgetId){
+  editingBudgetId = budgetId || null;
+  const b = budgetId ? DATA.budgets.find(x=>x.id===budgetId) : null;
+  renderBudgetModal(b);
+}
+function renderBudgetModal(b){
+  const catOptions = categoryOptionsHtml("expense", b?b.categoryId:null);
+  const html = `
+    <div class="modal-head"><h3>${b?t('save_changes'):t('create_budget')}</h3><button class="modal-close" onclick="closeModal()"><span class="material-symbols-rounded">close</span></button></div>
+    <div class="modal-body">
+      <div class="field"><label data-t="category">Kategori Pengeluaran</label><select id="budCategory">${catOptions}</select></div>
+      <div class="field">
+        <label><span data-t="budget_limit">Batas Anggaran</span> <span class="unit-badge">(Rp)</span></label>
+        <div class="amount-input"><input type="text" inputmode="numeric" id="budAmount" value="${b?Number(b.amount).toLocaleString('id-ID'):''}" oninput="this.value=formatLiveAmount(this.value)"></div>
+      </div>
+      <div class="field"><label data-t="period">Periode</label>
+        <select id="budPeriod">
+          <option value="weekly" ${b&&b.period==='weekly'?'selected':''}>${t('weekly')}</option>
+          <option value="monthly" ${(!b||b.period==='monthly')?'selected':''}>${t('monthly')}</option>
+          <option value="yearly" ${b&&b.period==='yearly'?'selected':''}>${t('yearly')}</option>
+        </select>
+      </div>
+      ${b ? `
+      <div class="btn-row">
+        <button class="btn-danger" style="flex:1;" onclick="deleteBudget('${b.id}')" data-t="delete">Hapus</button>
+        <button class="btn-primary" style="flex:2;" onclick="saveBudget()" data-t="save_changes">Simpan Perubahan</button>
+      </div>` : `<button class="btn-primary" onclick="saveBudget()" data-t="save">Simpan Anggaran</button>`}
+    </div>`;
+  openModal(html);
+}
+function saveBudget(){
+  const categoryId = document.getElementById("budCategory").value;
+  const amount = parseAmountInput(document.getElementById("budAmount").value);
+  const period = document.getElementById("budPeriod").value;
+  if(!amount||amount<=0){ showToast(DATA.settings.lang==="en"?"Enter a valid budget amount":"Masukkan batas anggaran yang valid"); return; }
+  const payload = {categoryId, amount, period};
+  if(editingBudgetId){
+    const idx = DATA.budgets.findIndex(x=>x.id===editingBudgetId);
+    DATA.budgets[idx] = {...DATA.budgets[idx], ...payload};
+    showToast(DATA.settings.lang==="en"?"Budget updated":"Anggaran diperbarui");
+  } else {
+    payload.id = uid("bud");
+    DATA.budgets.push(payload);
+    showToast(DATA.settings.lang==="en"?"Budget added":"Anggaran ditambahkan");
+  }
+  saveData(); closeModal(); switchPage("budgets");
+}
+function deleteBudget(id){
+  const idx = DATA.budgets.findIndex(b=>b.id===id);
+  if(idx<0) return;
+  const removed = DATA.budgets[idx];
+  DATA.budgets.splice(idx,1);
+  saveData(); closeModal(); switchPage("budgets");
+  showToast(DATA.settings.lang==="en"?"Budget deleted":"Anggaran dihapus", ()=>{
+    DATA.budgets.splice(idx,0,removed); saveData(); render();
+  });
+}
+
+/* ================= DEBT MODAL ================= */
+let editingDebtId = null;
+function openDebtModal(debtId){
+  editingDebtId = debtId || null;
+  const d = debtId ? DATA.debts.find(x=>x.id===debtId) : null;
+  renderDebtModal(d);
+}
+function renderDebtModal(d){
+  const paid = d ? getDebtPaid(d) : 0;
+  const html = `
+    <div class="modal-head"><h3>${d?(DATA.settings.lang==='en'?'Debt/Credit Details':'Detail Hutang/Piutang'):t('add_debt')}</h3><button class="modal-close" onclick="closeModal()"><span class="material-symbols-rounded">close</span></button></div>
+    <div class="modal-body">
+      <div class="type-toggle">
+        <button class="${(!d||d.type==='hutang')?'on-expense':''}" data-dtype="hutang" onclick="setDebtType(this)">${t('debt_i_owe')}</button>
+        <button class="${d&&d.type==='piutang'?'on-income':''}" data-dtype="piutang" onclick="setDebtType(this)">${t('debt_owed_to_me')}</button>
+      </div>
+      <div class="field"><label data-t="person_name">Nama Orang / Pihak</label><input type="text" id="debtPerson" value="${d?escapeHtml(d.personName):''}"></div>
+      <div class="field">
+        <label><span data-t="total_amount">Jumlah Total</span> <span class="unit-badge">(Rp)</span></label>
+        <div class="amount-input"><input type="text" inputmode="numeric" id="debtAmount" value="${d?Number(d.amount).toLocaleString('id-ID'):''}" oninput="this.value=formatLiveAmount(this.value)"></div>
+      </div>
+      <div class="field"><label data-t="due_date">Jatuh Tempo (Opsional)</label><input type="date" id="debtDue" value="${d?(d.dueDate||''):''}"></div>
+      <div class="field"><label data-t="notes">Catatan (Opsional)</label><textarea id="debtNotes">${d?escapeHtml(d.notes||''):''}</textarea></div>
+      ${d ? `
+      <div class="card" style="background:var(--bg); margin-bottom:12px;">
+        <div style="display:flex; justify-content:space-between; font-size:12.5px; margin-bottom:6px;"><span data-t="already_paid">Sudah dibayar</span><b>${formatRupiah(paid)}</b></div>
+        <div class="field" style="margin-bottom:6px;">
+          <div class="amount-input"><input type="text" inputmode="numeric" id="debtPaymentAdd" placeholder="${t('add_payment_placeholder')}" oninput="this.value=formatLiveAmount(this.value)"></div>
+        </div>
+        <button class="btn-ghost" onclick="addDebtPayment('${d.id}')" data-t="record_payment">+ Catat Pembayaran</button>
+      </div>
+      <div class="btn-row">
+        <button class="btn-danger" style="flex:1;" onclick="deleteDebt('${d.id}')" data-t="delete">Hapus</button>
+        <button class="btn-primary" style="flex:2;" onclick="saveDebt()" data-t="save_changes">Simpan Perubahan</button>
+      </div>` : `<button class="btn-primary" onclick="saveDebt()" data-t="save">Simpan</button>`}
+    </div>`;
+  openModal(html);
+}
+function setDebtType(btn){
+  document.querySelectorAll('[data-dtype]').forEach(b=>{ b.classList.remove('on-expense','on-income'); });
+  btn.classList.add(btn.dataset.dtype==='hutang'?'on-expense':'on-income');
+}
+function saveDebt(){
+  const activeBtn = document.querySelector('[data-dtype].on-expense, [data-dtype].on-income');
+  const type = activeBtn ? activeBtn.dataset.dtype : "hutang";
+  const personName = document.getElementById("debtPerson").value.trim().slice(0,100);
+  if(!personName){ showToast(DATA.settings.lang==="en"?"Name is required":"Nama wajib diisi"); return; }
+  const amount = parseAmountInput(document.getElementById("debtAmount").value);
+  if(!amount||amount<=0){ showToast(DATA.settings.lang==="en"?"Enter a valid amount":"Masukkan jumlah yang valid"); return; }
+  const dueDate = document.getElementById("debtDue").value || "";
+  const notes = document.getElementById("debtNotes").value.trim().slice(0,500);
+  const payload = {type, personName, amount, dueDate, notes};
+  if(editingDebtId){
+    const idx = DATA.debts.findIndex(x=>x.id===editingDebtId);
+    DATA.debts[idx] = {...DATA.debts[idx], ...payload};
+    showToast(DATA.settings.lang==="en"?"Updated":"Data diperbarui");
+  } else {
+    payload.id = uid("debt"); payload.payments = [];
+    DATA.debts.push(payload);
+    showToast(DATA.settings.lang==="en"?"Added":"Data ditambahkan");
+  }
+  saveData(); closeModal(); switchPage("debts");
+}
+function addDebtPayment(debtId){
+  const val = parseAmountInput(document.getElementById("debtPaymentAdd").value);
+  if(!val||val<=0){ showToast(DATA.settings.lang==="en"?"Enter a payment amount":"Masukkan jumlah pembayaran"); return; }
+  const idx = DATA.debts.findIndex(d=>d.id===debtId);
+  if(idx<0) return;
+  DATA.debts[idx].payments = DATA.debts[idx].payments || [];
+  DATA.debts[idx].payments.push({id:uid("pay"), amount:val, date:todayStr()});
+  saveData();
+  showToast(DATA.settings.lang==="en"?"Payment recorded":"Pembayaran dicatat");
+  closeModal();
+  switchPage("debts");
+}
+function deleteDebt(id){
+  const idx = DATA.debts.findIndex(d=>d.id===id);
+  if(idx<0) return;
+  const removed = DATA.debts[idx];
+  DATA.debts.splice(idx,1);
+  saveData(); closeModal(); switchPage("debts");
+  showToast(DATA.settings.lang==="en"?"Deleted":"Data dihapus", ()=>{
+    DATA.debts.splice(idx,0,removed); saveData(); render();
+  });
+}
+
+/* ================= RECURRING MODAL ================= */
+let editingRecurringId = null;
+function openRecurringModal(rId){
+  editingRecurringId = rId || null;
+  const r = rId ? DATA.recurring.find(x=>x.id===rId) : null;
+  renderRecurringModal(r);
+}
+function renderRecurringModal(r){
+  const accOptions = DATA.accounts.map(a=>`<option value="${a.id}" ${r&&r.accountId===a.id?'selected':''}>${escapeHtml(a.name)}</option>`).join("");
+  const toAccOptions = DATA.accounts.map(a=>`<option value="${a.id}" ${r&&r.toAccountId===a.id?'selected':''}>${escapeHtml(a.name)}</option>`).join("");
+  const rType = r ? r.type : "expense";
+  const catOptions = categoryOptionsHtml(rType==="transfer"?"expense":rType, r?r.categoryId:null);
+  const html = `
+    <div class="modal-head"><h3>${r?t('recurring_edit'):t('recurring_new')}</h3><button class="modal-close" onclick="closeModal()"><span class="material-symbols-rounded">close</span></button></div>
+    <div class="modal-body">
+      <div class="type-toggle">
+        <button class="${(!r||rType==='expense')?'on-expense':''}" data-rtype="expense" onclick="setRecurType(this)" data-t="expense">Pengeluaran</button>
+        <button class="${r&&rType==='income'?'on-income':''}" data-rtype="income" onclick="setRecurType(this)" data-t="income">Pemasukan</button>
+        <button class="${r&&rType==='transfer'?'on-transfer':''}" data-rtype="transfer" onclick="setRecurType(this)" data-t="transfer">Transfer</button>
+      </div>
+      <div class="field">
+        <label><span data-t="amount">Jumlah</span> <span class="unit-badge">(Rp)</span></label>
+        <div class="amount-input"><input type="text" inputmode="numeric" id="recAmount" value="${r?Number(r.amount).toLocaleString('id-ID'):''}" oninput="this.value=formatLiveAmount(this.value)"></div>
+      </div>
+      <div class="field"><label data-t="account">Rekening</label><select id="recAccount">${accOptions}</select></div>
+      <div class="field" id="recToAccountField" style="display:${r&&rType==='transfer'?'block':'none'};"><label data-t="to_account">Ke Rekening</label><select id="recToAccount">${toAccOptions}</select></div>
+      <div class="field" id="recCategoryField" style="display:${r&&rType==='transfer'?'none':'block'};"><label data-t="category">Kategori</label><select id="recCategory">${catOptions}</select></div>
+      <div class="field"><label data-t="frequency">Frekuensi</label>
+        <select id="recFrequency">
+          <option value="daily" ${r&&r.frequency==='daily'?'selected':''}>${t('daily')}</option>
+          <option value="weekly" ${r&&r.frequency==='weekly'?'selected':''}>${t('weekly')}</option>
+          <option value="monthly" ${(!r||r.frequency==='monthly')?'selected':''}>${t('monthly')}</option>
+          <option value="yearly" ${r&&r.frequency==='yearly'?'selected':''}>${t('yearly')}</option>
+        </select>
+      </div>
+      <div class="field-row">
+        <div class="field"><label data-t="start_date">Tanggal Mulai</label><input type="date" id="recStart" value="${r?r.startDate:todayStr()}"></div>
+        <div class="field"><label data-t="next_occurrence">Kejadian Berikutnya</label><input type="date" id="recNext" value="${r?r.nextDate:todayStr()}"></div>
+      </div>
+      <div class="field"><label data-t="notes">Catatan (Opsional)</label><textarea id="recNotes">${r?escapeHtml(r.notes||''):''}</textarea></div>
+      <div class="field" style="display:flex; align-items:center; justify-content:space-between;">
+        <label style="margin:0;" data-t="active">Aktif</label>
+        <label class="switch"><input type="checkbox" id="recActive" ${(!r||r.active)?'checked':''}><span class="slider"></span></label>
+      </div>
+      ${r ? `
+      <div class="btn-row">
+        <button class="btn-danger" style="flex:1;" onclick="deleteRecurring('${r.id}')" data-t="delete">Hapus</button>
+        <button class="btn-primary" style="flex:2;" onclick="saveRecurring()" data-t="save_changes">Simpan Perubahan</button>
+      </div>` : `<button class="btn-primary" onclick="saveRecurring()" data-t="save">Simpan</button>`}
+    </div>`;
+  openModal(html);
+}
+function setRecurType(btn){
+  document.querySelectorAll('[data-rtype]').forEach(b=>{ b.classList.remove('on-expense','on-income','on-transfer'); });
+  const ty = btn.dataset.rtype;
+  btn.classList.add(ty==='expense'?'on-expense':(ty==='income'?'on-income':'on-transfer'));
+  document.getElementById("recToAccountField").style.display = ty==='transfer'?'block':'none';
+  document.getElementById("recCategoryField").style.display = ty==='transfer'?'none':'block';
+  if(ty!=='transfer'){
+    const catSel = document.getElementById("recCategory");
+    if(catSel) catSel.innerHTML = categoryOptionsHtml(ty, null);
+  }
+}
+function saveRecurring(){
+  const activeBtn = document.querySelector('[data-rtype].on-expense, [data-rtype].on-income, [data-rtype].on-transfer');
+  const type = activeBtn ? activeBtn.dataset.rtype : "expense";
+  const amount = parseAmountInput(document.getElementById("recAmount").value);
+  if(!amount||amount<=0){ showToast(DATA.settings.lang==="en"?"Enter a valid amount":"Masukkan jumlah yang valid"); return; }
+  const accountId = document.getElementById("recAccount").value;
+  const frequency = document.getElementById("recFrequency").value;
+  const startDate = document.getElementById("recStart").value || todayStr();
+  const nextDate = document.getElementById("recNext").value || startDate;
+  const notes = document.getElementById("recNotes").value.trim().slice(0,500);
+  const active = document.getElementById("recActive").checked;
+  const payload = {type, amount, accountId, frequency, startDate, nextDate, notes, active};
+  if(type==="transfer"){
+    const toAccountId = document.getElementById("recToAccount").value;
+    if(toAccountId===accountId){ showToast(DATA.settings.lang==="en"?"Destination account must differ":"Rekening tujuan harus berbeda"); return; }
+    payload.toAccountId = toAccountId;
+  } else {
+    const categoryId = document.getElementById("recCategory").value;
+    if(!categoryId){ showToast(DATA.settings.lang==="en"?"Select a category":"Pilih kategori"); return; }
+    payload.categoryId = categoryId;
+  }
+  if(editingRecurringId){
+    const idx = DATA.recurring.findIndex(x=>x.id===editingRecurringId);
+    DATA.recurring[idx] = {...DATA.recurring[idx], ...payload};
+    showToast(DATA.settings.lang==="en"?"Updated":"Diperbarui");
+  } else {
+    payload.id = uid("rec");
+    DATA.recurring.push(payload);
+    showToast(DATA.settings.lang==="en"?"Recurring transaction added":"Transaksi berulang ditambahkan");
+  }
+  saveData();
+  processDueRecurring();
+  closeModal(); switchPage("recurring");
+}
+function deleteRecurring(id){
+  DATA.recurring = DATA.recurring.filter(r=>r.id!==id);
+  saveData(); closeModal(); showToast(DATA.settings.lang==="en"?"Deleted":"Dihapus"); switchPage("recurring");
+}
+
+/* ================= BACKUP / RESET / PDF ================= */
+function openBackupModal(){
+  const html = `
+    <div class="modal-head"><h3 data-t="backup_sync">Backup &amp; Sinkronisasi</h3><button class="modal-close" onclick="closeModal()"><span class="material-symbols-rounded">close</span></button></div>
+    <div class="modal-body">
+      <p style="font-size:12.5px; color:var(--muted); line-height:1.6;">
+        ${DATA.settings.lang==='en'
+          ? 'SBD Smart Finance stores all data directly on your device (offline-first). Export your data regularly as a backup, then manually upload it to Google Drive, Dropbox, or your own email.'
+          : 'SBD Smart Finance menyimpan semua data langsung di perangkat Anda (offline-first). Ekspor data secara berkala sebagai cadangan, lalu unggah manual ke Google Drive, Dropbox, atau email pribadi.'}
+      </p>
+      <button class="btn-primary" onclick="exportBackup()"><span class="material-symbols-rounded" style="vertical-align:middle; font-size:18px;">file_download</span> <span data-t="export_data">Ekspor Data (.json)</span></button>
+      <button class="btn-ghost" onclick="triggerImportBackup()"><span class="material-symbols-rounded" style="vertical-align:middle; font-size:18px;">file_upload</span> <span data-t="import_data">Impor Data (.json)</span></button>
+      <button class="btn-ghost" onclick="openPdfExportModal()"><span class="material-symbols-rounded" style="vertical-align:middle; font-size:18px;">picture_as_pdf</span> <span data-t="export_pdf">Ekspor Laporan (PDF)</span></button>
+    </div>`;
+  openModal(html);
+}
+function exportBackup(){
+  const blob = new Blob([JSON.stringify(DATA,null,2)], {type:"application/json"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  const stamp = todayStr();
+  a.href = url;
+  a.download = `SBD_Smart_Finance_Backup_${stamp}.json`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  DATA.settings.lastBackupDate = todayStr();
+  DATA.settings.backupReminderDismissed = null;
+  saveData();
+  showToast(DATA.settings.lang==="en"?"Backup downloaded":"Backup berhasil diunduh");
+  render();
+}
+function triggerImportBackup(){
+  const inp = document.getElementById("importFileInput");
+  if(inp){ inp.click(); return; }
+  const tempInput = document.createElement("input");
+  tempInput.type = "file"; tempInput.accept = "application/json";
+  tempInput.onchange = handleImportFile;
+  tempInput.click();
+}
+function handleImportFile(evt){
+  const file = evt.target.files && evt.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = e=>{
+    try{
+      const parsed = JSON.parse(e.target.result);
+      if(!parsed.accounts || !parsed.categories || !parsed.transactions){
+        showToast(DATA.settings.lang==="en"?"Invalid backup file":"File backup tidak valid"); return;
+      }
+      DATA = parsed;
+      if(!DATA.debts) DATA.debts = [];
+      if(!DATA.budgets) DATA.budgets = [];
+      if(!DATA.recurring) DATA.recurring = [];
+      if(!DATA.settings) DATA.settings = {onboarded:true, lang:"id", theme:"light"};
+      if(!DATA.settings.lang) DATA.settings.lang = "id";
+      if(!DATA.settings.theme) DATA.settings.theme = "light";
+      DATA.accounts.forEach(a=>{ if(!a.currency) a.currency="IDR"; if(!a.exchangeRate) a.exchangeRate=1; });
+      DATA.categories.forEach(c=>{ if(c.parentId===undefined) c.parentId=null; });
+      saveData();
+      applyTheme();
+      closeModal();
+      showToast(DATA.settings.lang==="en"?"Data restored successfully":"Data berhasil dipulihkan");
+      switchPage("dashboard");
+    }catch(err){
+      showToast(DATA.settings.lang==="en"?"Failed to read backup file":"Gagal membaca file backup");
+    }
+  };
+  reader.readAsText(file);
+}
+function openResetModal(){
+  const html = `
+    <div class="modal-head"><h3 data-t="delete_all">Hapus Semua Data</h3><button class="modal-close" onclick="closeModal()"><span class="material-symbols-rounded">close</span></button></div>
+    <div class="modal-body">
+      <p style="font-size:13px; color:var(--red); font-weight:600; line-height:1.6;">
+        ${DATA.settings.lang==='en'
+          ? 'This will permanently delete all accounts, categories, transactions, budgets, and debts/credits from this device. Make sure you have exported a backup first.'
+          : 'Tindakan ini akan menghapus seluruh rekening, kategori, transaksi, anggaran, dan hutang/piutang secara permanen dari perangkat ini. Pastikan Anda sudah mengekspor backup terlebih dahulu.'}
+      </p>
+      <button class="btn-ghost" onclick="exportBackup()" data-t="export_data">Ekspor Backup Dulu</button>
+      <button class="btn-danger" onclick="confirmReset()">${DATA.settings.lang==='en'?'Yes, Delete All Data':'Ya, Hapus Semua Data'}</button>
+    </div>`;
+  openModal(html);
+}
+function confirmReset(){
+  const lang = DATA.settings.lang, theme = DATA.settings.theme;
+  DATA = emptyData();
+  DATA.settings.lang = lang; DATA.settings.theme = theme; DATA.settings.onboarded = true;
+  saveData();
+  closeModal();
+  showToast(DATA.settings.lang==="en"?"All data deleted":"Semua data telah dihapus");
+  switchPage("dashboard");
+}
+
+function openPdfExportModal(){
+  const now = new Date();
+  const mKey = monthKey(todayStr());
+  const html = `
+    <div class="modal-head"><h3 data-t="export_pdf">Ekspor Laporan PDF</h3><button class="modal-close" onclick="closeModal()"><span class="material-symbols-rounded">close</span></button></div>
+    <div class="modal-body">
+      <p style="font-size:12.5px; color:var(--muted); line-height:1.6;">
+        ${DATA.settings.lang==='en'
+          ? 'A print-ready summary will open. Use your browser&#39;s Print dialog and choose "Save as PDF".'
+          : 'Ringkasan siap cetak akan terbuka. Gunakan dialog Cetak/Print browser Anda dan pilih "Simpan sebagai PDF".'}
+      </p>
+      <div class="field"><label data-t="period">Bulan Laporan</label><input type="month" id="pdfMonth" value="${mKey}"></div>
+      <button class="btn-primary" onclick="generatePdfReport()"><span class="material-symbols-rounded" style="vertical-align:middle; font-size:18px;">print</span> ${DATA.settings.lang==='en'?'Generate & Print':'Buat & Cetak'}</button>
+    </div>`;
+  openModal(html);
+}
+function generatePdfReport(){
+  const mKey = document.getElementById("pdfMonth").value || monthKey(todayStr());
+  const totals = getMonthTotals(mKey);
+  const expByCat = getExpenseByCategory(mKey);
+  const txList = DATA.transactions.filter(t=>monthKey(t.date)===mKey).sort((a,b)=>a.date.localeCompare(b.date));
+  const lang = DATA.settings.lang;
+
+  const rowsHtml = txList.map(tx=>{
+    const acc = getAccount(tx.accountId);
+    let catLabel;
+    if(tx.type==="transfer"){ const to = getAccount(tx.toAccountId); catLabel = t('transfer')+" → "+(to?to.name:"-"); }
+    else if(tx.splits && tx.splits.length){ catLabel = tx.splits.map(s=>{const c=getCategory(s.categoryId); return c?c.name:"-";}).join(", "); }
+    else { const c = getCategory(tx.categoryId); catLabel = c?c.name:"-"; }
+    const sign = tx.type==="income"?"+":(tx.type==="expense"?"-":"");
+    return `<tr>
+      <td style="padding:6px 8px; border-bottom:1px solid #eee; font-size:11px;">${formatDateID(tx.date)}</td>
+      <td style="padding:6px 8px; border-bottom:1px solid #eee; font-size:11px;">${escapeHtml(catLabel)}</td>
+      <td style="padding:6px 8px; border-bottom:1px solid #eee; font-size:11px;">${acc?escapeHtml(acc.name):"-"}</td>
+      <td style="padding:6px 8px; border-bottom:1px solid #eee; font-size:11px; text-align:right; font-weight:700;">${sign}${formatMoney(tx.amount, acc?acc.currency:'IDR')}</td>
+    </tr>`;
+  }).join("");
+
+  const catRowsHtml = expByCat.map(x=>`
+    <tr><td style="padding:5px 8px; font-size:11px;">${escapeHtml(x.cat.name)}</td>
+    <td style="padding:5px 8px; font-size:11px; text-align:right; font-weight:700;">${formatRupiah(x.total)}</td></tr>`).join("");
+
+  const printHtml = `
+    <div style="font-family: 'Plus Jakarta Sans', Arial, sans-serif; color:#1B2233; max-width:760px; margin:0 auto;">
+      <div style="display:flex; align-items:center; gap:12px; border-bottom:3px solid #C9A227; padding-bottom:14px; margin-bottom:18px;">
+        <div style="width:44px; height:44px; border-radius:50%; background:#0A1A3D; color:#fff; display:flex; align-items:center; justify-content:center; font-weight:700; font-family:Georgia,serif;">SB</div>
+        <div>
+          <div style="font-size:18px; font-weight:700; font-family:Georgia,serif;">SBD Smart Finance</div>
+          <div style="font-size:11px; color:#6B7280;">${lang==='en'?'Monthly Financial Report':'Laporan Keuangan Bulanan'} &mdash; ${monthLabel(mKey)} ${mKey.split('-')[0]}</div>
+        </div>
+      </div>
+
+      <div style="display:flex; gap:12px; margin-bottom:20px;">
+        <div style="flex:1; background:#E7F6EE; border-radius:10px; padding:12px;">
+          <div style="font-size:10.5px; color:#178A4C; font-weight:700;">${lang==='en'?'TOTAL INCOME':'TOTAL PEMASUKAN'}</div>
+          <div style="font-size:17px; font-weight:800; color:#178A4C; margin-top:3px;">${formatRupiah(totals.income)}</div>
+        </div>
+        <div style="flex:1; background:#FDEAE9; border-radius:10px; padding:12px;">
+          <div style="font-size:10.5px; color:#D9362E; font-weight:700;">${lang==='en'?'TOTAL EXPENSE':'TOTAL PENGELUARAN'}</div>
+          <div style="font-size:17px; font-weight:800; color:#D9362E; margin-top:3px;">${formatRupiah(totals.expense)}</div>
+        </div>
+        <div style="flex:1; background:#EAF1FE; border-radius:10px; padding:12px;">
+          <div style="font-size:10.5px; color:#2563EB; font-weight:700;">${lang==='en'?'NET BALANCE':'SALDO BERSIH'}</div>
+          <div style="font-size:17px; font-weight:800; color:#2563EB; margin-top:3px;">${formatRupiah(totals.income-totals.expense)}</div>
+        </div>
+      </div>
+
+      <div style="font-size:13px; font-weight:800; margin-bottom:8px; font-family:Georgia,serif;">${lang==='en'?'Expense by Category':'Pengeluaran per Kategori'}</div>
+      <table style="width:100%; border-collapse:collapse; margin-bottom:20px;">${catRowsHtml || `<tr><td style="font-size:11px; color:#999; padding:6px;">-</td></tr>`}</table>
+
+      <div style="font-size:13px; font-weight:800; margin-bottom:8px; font-family:Georgia,serif;">${lang==='en'?'Transaction Details':'Rincian Transaksi'}</div>
+      <table style="width:100%; border-collapse:collapse;">
+        <thead><tr style="background:#0A1A3D; color:#fff;">
+          <th style="padding:7px 8px; font-size:10.5px; text-align:left;">${lang==='en'?'Date':'Tanggal'}</th>
+          <th style="padding:7px 8px; font-size:10.5px; text-align:left;">${lang==='en'?'Category':'Kategori'}</th>
+          <th style="padding:7px 8px; font-size:10.5px; text-align:left;">${lang==='en'?'Account':'Rekening'}</th>
+          <th style="padding:7px 8px; font-size:10.5px; text-align:right;">${lang==='en'?'Amount':'Jumlah'}</th>
+        </tr></thead>
+        <tbody>${rowsHtml || `<tr><td colspan="4" style="font-size:11px; color:#999; padding:10px;">-</td></tr>`}</tbody>
+      </table>
+
+      <div style="margin-top:26px; text-align:center; font-size:10px; color:#9199B0; border-top:1px solid #eee; padding-top:12px;">
+        ${lang==='en'?'Generated by':'Dibuat oleh'} SBD Smart Finance &middot; SB-Digital &middot; ${SBD_WEBSITE}
+      </div>
+    </div>`;
+
+  document.getElementById("printArea").innerHTML = printHtml;
+  closeModal();
+  setTimeout(()=>window.print(), 250);
+}
+
+/* ================= THEME & LANGUAGE ================= */
+function applyTheme(){
+  document.documentElement.setAttribute("data-theme", DATA.settings.theme==='dark'?'dark':'light');
+  const icon = document.getElementById("themeIcon");
+  if(icon) icon.textContent = DATA.settings.theme==='dark' ? "light_mode" : "dark_mode";
+  document.documentElement.lang = DATA.settings.lang==='en' ? 'en' : 'id';
+}
+function toggleTheme(){
+  DATA.settings.theme = DATA.settings.theme==='dark' ? 'light' : 'dark';
+  saveData();
+  applyTheme();
+  render();
+}
+function changeLanguage(lang){
+  DATA.settings.lang = lang;
+  saveData();
+  applyTheme();
+  render();
+}
+
+/* ================= TUTORIAL ================= */
+const TUTORIAL_SLIDES_ID = [
+  {icon:"receipt_long", title:"Catat Transaksi", desc:"Ketuk tombol + untuk mencatat pemasukan, pengeluaran, atau transfer antar rekening. Anda juga bisa membagi satu transaksi ke beberapa kategori sekaligus (Split Kategori)."},
+  {icon:"account_balance", title:"Kelola Rekening & Mata Uang", desc:"Tambahkan rekening tanpa batas: tunai, bank, e-wallet, bahkan mata uang asing (USD, JPY, SAR, CNY, INR) dengan kurs manual."},
+  {icon:"pie_chart", title:"Anggaran & Sub-Kategori", desc:"Buat anggaran per kategori untuk memantau pengeluaran. Kategori juga bisa memiliki sub-kategori untuk pencatatan yang lebih rinci."},
+  {icon:"event_repeat", title:"Transaksi Berulang", desc:"Atur tagihan rutin seperti listrik, gaji, atau cicilan agar tercatat otomatis sesuai jadwal tanpa input manual."},
+  {icon:"bar_chart", title:"Laporan & Insight", desc:"Lihat tren pemasukan-pengeluaran 6 bulan terakhir, insight otomatis, dan ekspor laporan PDF siap cetak."},
+  {icon:"cloud_sync", title:"Backup Aman", desc:"Semua data tersimpan lokal di perangkat Anda. Ekspor backup secara berkala dan simpan ke cloud pilihan Anda sendiri."}
+];
+const TUTORIAL_SLIDES_EN = [
+  {icon:"receipt_long", title:"Record Transactions", desc:"Tap the + button to log income, expenses, or transfers between accounts. You can also split one transaction across multiple categories."},
+  {icon:"account_balance", title:"Accounts & Currencies", desc:"Add unlimited accounts: cash, bank, e-wallet, even foreign currencies (USD, JPY, SAR, CNY, INR) with a manual exchange rate."},
+  {icon:"pie_chart", title:"Budgets & Subcategories", desc:"Create budgets per category to monitor spending. Categories can also have subcategories for more detailed tracking."},
+  {icon:"event_repeat", title:"Recurring Transactions", desc:"Set up recurring bills like electricity, salary, or installments so they're logged automatically on schedule."},
+  {icon:"bar_chart", title:"Reports & Insights", desc:"View 6-month income/expense trends, automatic insights, and export print-ready PDF reports."},
+  {icon:"cloud_sync", title:"Safe Backups", desc:"All data stays local on your device. Export backups regularly and save them to your own preferred cloud storage."}
+];
+let tutorialIndex = 0;
+function openTutorial(){
+  tutorialIndex = 0;
+  renderTutorialSlide();
+}
+function renderTutorialSlide(){
+  const slides = DATA.settings.lang==='en' ? TUTORIAL_SLIDES_EN : TUTORIAL_SLIDES_ID;
+  const s = slides[tutorialIndex];
+  const dots = slides.map((_,i)=>`<div class="d ${i===tutorialIndex?'active':''}"></div>`).join("");
+  const isLast = tutorialIndex===slides.length-1;
+  let overlay = document.getElementById("tutOverlay");
+  if(!overlay){
+    overlay = document.createElement("div");
+    overlay.className = "tut-overlay";
+    overlay.id = "tutOverlay";
+    document.body.appendChild(overlay);
+  }
+  overlay.innerHTML = `
+    <div class="tut-card">
+      <div class="tut-icon material-symbols-rounded">${s.icon}</div>
+      <h3>${escapeHtml(s.title)}</h3>
+      <p>${escapeHtml(s.desc)}</p>
+      <div class="tut-dots">${dots}</div>
+      <div class="btn-row">
+        ${tutorialIndex>0?`<button class="btn-ghost" style="flex:1;" onclick="tutorialIndex--; renderTutorialSlide();">${DATA.settings.lang==='en'?'Back':'Kembali'}</button>`:""}
+        <button class="btn-primary" style="flex:2;" onclick="${isLast?'closeTutorial()':'tutorialIndex++; renderTutorialSlide();'}">${isLast?(DATA.settings.lang==='en'?'Done':'Selesai'):(DATA.settings.lang==='en'?'Next':'Lanjut')}</button>
+      </div>
+    </div>`;
+}
+function closeTutorial(){
+  const overlay = document.getElementById("tutOverlay");
+  if(overlay) overlay.remove();
+  DATA.settings.tutorialSeen = true;
+  saveData();
+}
+
+/* ================= ONBOARDING ================= */
+function maybeShowWelcome(){
+  if(DATA.settings && DATA.settings.onboarded) return;
+  const overlay = document.createElement("div");
+  overlay.className = "welcome-overlay";
+  overlay.innerHTML = `
+    <div class="welcome-card">
+      <svg width="56" height="56" viewBox="0 0 64 64" style="margin:0 auto;">
+        <circle cx="32" cy="32" r="30" fill="#0A1A3D" stroke="#C9A227" stroke-width="2"/>
+        <path d="M10 40 A24 24 0 0 1 14 16" fill="none" stroke="#C9A227" stroke-width="2.2" stroke-linecap="round" opacity="0.65"/>
+        <text x="24" y="41" font-family="Fraunces, serif" font-weight="700" font-size="26" fill="#FFFFFF" text-anchor="middle">S</text>
+        <text x="42" y="41" font-family="Fraunces, serif" font-weight="700" font-size="26" fill="#C9A227" text-anchor="middle">B</text>
+      </svg>
+      <h2 class="font-display">${t('welcome_title')}</h2>
+      <p>${t('welcome_desc')}</p>
+      <div class="checklist-grid" style="text-align:left; margin-bottom:16px;">
+        <div class="ck"><span class="material-symbols-rounded">check_circle</span> Tanpa Login/Password</div>
+        <div class="ck"><span class="material-symbols-rounded">check_circle</span> Tanpa Iklan/Trial</div>
+        <div class="ck"><span class="material-symbols-rounded">check_circle</span> Tanpa Batas Apapun</div>
+        <div class="ck"><span class="material-symbols-rounded">check_circle</span> 100% Offline &amp; Privat</div>
+      </div>
+      <button class="btn-primary" id="welcomeStartBtn">${t('start_now')}</button>
+    </div>`;
+  document.body.appendChild(overlay);
+  overlay.querySelector("#welcomeStartBtn").onclick = ()=>{
+    DATA.settings.onboarded = true;
+    saveData();
+    overlay.remove();
+    if(!DATA.settings.tutorialSeen){ openTutorial(); }
+  };
+}
+
+/* ================= PWA install & service worker ================= */
+window.addEventListener("beforeinstallprompt", (e)=>{
+  try{
+    e.preventDefault();
+    deferredInstallPrompt = e;
+    const btn = document.getElementById("installBtn");
+    if(btn) btn.style.display = "flex";
+  }catch(err){ console.error(err); }
+});
+function triggerInstall(){
+  if(!deferredInstallPrompt) return;
+  try{
+    deferredInstallPrompt.prompt();
+    deferredInstallPrompt.userChoice.finally(()=>{
+      deferredInstallPrompt = null;
+      const btn = document.getElementById("installBtn");
+      if(btn) btn.style.display = "none";
+    });
+  }catch(err){ console.error(err); }
+}
+window.addEventListener("appinstalled", ()=>{
+  const btn = document.getElementById("installBtn");
+  if(btn) btn.style.display = "none";
+});
+if("serviceWorker" in navigator){
+  window.addEventListener("load", ()=>{
+    // Pre-check that sw.js is actually reachable before registering.
+    // This avoids noisy 404 errors in preview/embed contexts that only
+    // serve index.html without its sibling files (manifest.json, sw.js, icons).
+    // On real hosting where all files are uploaded together, this check
+    // passes normally and the service worker registers as usual.
+    fetch("sw.js", {method:"HEAD"})
+      .then((res)=>{
+        if(res && res.ok){
+          navigator.serviceWorker.register("sw.js").catch((err)=>{
+            console.warn("SBD Smart Finance: service worker registration skipped —", err.message || err);
+          });
+        }
+      })
+      .catch(()=>{ /* sw.js not reachable here (e.g. preview) — silently skip, app still works fully without it */ });
+  });
+}
+
+/* ================= INIT ================= */
+function hideSplash(){
+  const splash = document.getElementById("splash");
+  const shell = document.getElementById("app-shell");
+  if(splash) splash.style.display = "none";
+  // Important: don't force an inline "flex" here — that would out-rank the
+  // desktop media query's "display:grid" (inline styles beat CSS rules).
+  // Just remove the inline "display:none" so the stylesheet cascade
+  // (flex on mobile, grid on desktop) takes over naturally.
+  if(shell) shell.style.removeProperty("display");
+}
+let _sbdInitStarted = false;
+function initApp(){
+  if(_sbdInitStarted) return;
+  _sbdInitStarted = true;
+  try{
+    loadData();
+  }catch(e){
+    console.error("loadData failed, starting with fresh data", e);
+    DATA = emptyData();
+  }
+  try{ applyTheme(); }catch(e){ console.error(e); }
+  try{ processDueRecurring(); }catch(e){ console.error(e); }
+  try{ safeHistoryReplace({sbdPage:"dashboard"}, "#dashboard"); }catch(e){ console.error(e); }
+
+  hideSplash();
+
+  try{
+    const navBtn = document.querySelector('.nav-btn[data-page="dashboard"]');
+    if(navBtn) navBtn.classList.add("active");
+    const sbtn = document.querySelector('.snav-btn[data-page="dashboard"]');
+    if(sbtn) sbtn.classList.add("active");
+    render();
+    maybeShowWelcome();
+  }catch(e){
+    console.error("Render failed", e);
+    const el = document.getElementById("page-content");
+    if(el) el.innerHTML = '<div class="empty-state"><span class="material-symbols-rounded">error</span><p>Terjadi kesalahan saat memuat halaman. Coba muat ulang (refresh) aplikasi.</p></div>';
+  }
+}
+// Safety net: no matter what happens above, never leave the user stuck on the splash screen.
+setTimeout(hideSplash, 3000);
+document.addEventListener("DOMContentLoaded", initApp);
+// In case DOMContentLoaded already fired before this script ran (e.g. script loaded late), init immediately too.
+if(document.readyState==="interactive" || document.readyState==="complete"){
+  initApp();
+}
+</script>
+</body>
+</html>
